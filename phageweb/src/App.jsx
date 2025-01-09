@@ -13,7 +13,7 @@ function App() {
       title: "Ambient Soundscape",
       description: "Environmental sound design for immersive installation",
       duration: "3:45",
-      videoUrl: "/videos/box.mp4",
+      videoUrl: "./videos/box.mp4",
       tags: ["ambient", "installation", "nature"],
       details: "Created using field recordings and granular synthesis."
     },
