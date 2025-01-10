@@ -1,17 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  base: '',  // This is important for assets to load correctly
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-    rollupOptions: {
-      input: path.resolve(__dirname, 'index.html'),
-    }
   },
   publicDir: 'public',
-  base: './',
 })
