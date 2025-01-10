@@ -11,7 +11,7 @@ function App() {
   const projects = [
     {
       id: 1,
-      title: "Ambient Soundscape",
+      title: "Layer: Society",
       description: "Environmental sound design for immersive installation",
       duration: "3:45",
       videoUrl: "./videos/box.mp4",
