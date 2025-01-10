@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X, Video } from 'lucide-react'
+console.log('App is loading...');
 
 function App() {
   const [activeProject, setActiveProject] = useState(null)
