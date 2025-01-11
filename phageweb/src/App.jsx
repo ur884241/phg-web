@@ -46,7 +46,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black/95 text-gray-400 font-mono text-sm">
+    <div className="min-h-screen bg-black text-gray-400 font-mono text-sm">
       {/* Background Video */}
       <div className="fixed inset-0 z-0">
         {activeProject && (
@@ -63,17 +63,19 @@ function App() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10">
-        <header className="p-4">
-          <div className="flex items-center space-x-2 opacity-50">
-            <FileAudio className="w-3 h-3" />
-            <span className="text-tiny">portfolio</span>
+      <div className="relative z-10 flex min-h-screen">
+        {/* Solid Black Sidebar */}
+        <div className="w-48 bg-black border-r border-gray-800">
+          {/* Header in sidebar */}
+          <div className="p-4 border-b border-gray-800">
+            <div className="flex items-center space-x-2 opacity-50">
+              <FileAudio className="w-3 h-3" />
+              <span className="text-tiny">portfolio</span>
+            </div>
           </div>
-        </header>
 
-        <div className="flex min-h-[calc(100vh-8rem)]">
-          {/* Sidebar */}
-          <div className="w-48 p-4 bg-black/20 backdrop-blur-sm">
+          {/* Project list */}
+          <div className="p-4">
             <div className="flex items-center space-x-2 mb-6 opacity-50">
               <Folder className="w-3 h-3" />
               <span className="text-tiny">projects</span>
@@ -93,9 +95,11 @@ function App() {
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="flex-1 p-8">
+        {/* Main Content */}
+        <div className="flex-1">
+          <div className="p-8">
             {activeProject ? (
               <div className="space-y-8">
                 <div className="flex justify-between items-center opacity-60">
@@ -156,13 +160,13 @@ function App() {
               </div>
             )}
           </div>
-        </div>
 
-        <footer className="fixed bottom-0 left-0 right-0 p-2 bg-transparent">
-          <div className="text-tiny opacity-30 ml-4">
-            -- NORMAL --
-          </div>
-        </footer>
+          <footer className="fixed bottom-0 left-48 right-0 p-2 bg-transparent">
+            <div className="text-tiny opacity-30 ml-4">
+              -- NORMAL --
+            </div>
+          </footer>
+        </div>
       </div>
     </div>
   )
