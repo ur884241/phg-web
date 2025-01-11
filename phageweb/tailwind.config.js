@@ -4,31 +4,26 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: 
+  theme: {
     extend: {
-      fontSize: {
-        'tiny': '0.65rem',
-      },
       fontFamily: {
         mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+      },
+      fontSize: {
+        'tiny': '0.75rem',
+        'xs': '0.85rem',
+        'sm': '0.95rem'
+      },
+      colors: {
+        'editor': {
+          'bg': '#050505',
+          'line': '#0F0F0F',
+          'text': '#666666',
+          'comment': '#333333',
+          'selection': '#1A1A1A',
+        }
       }
     },
   },
   plugins: [],
 }
-
-/** @type {import('tailwindcss').Config} */
-export default {
-  theme: {
-    extend: {
-      fontSize: {
-        'tiny': '0.75rem',      // Increased from 0.65rem
-        'xs': '0.85rem',        // Increased from 0.75rem
-        'sm': '0.95rem'         // Increased from 0.85rem
-      }
-    }
-  }
-}
-
-
-
