@@ -4,7 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
+  theme: 
     extend: {
       fontSize: {
         'tiny': '0.65rem',
@@ -29,5 +29,6 @@ export default {
     }
   }
 }
+
 
 
