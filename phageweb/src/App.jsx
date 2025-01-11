@@ -5,6 +5,8 @@ function App() {
   const [activeProject, setActiveProject] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(80)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const videoRef = useRef(null)
   
   const projects = [
@@ -12,7 +14,6 @@ function App() {
       id: 1,
       title: "Ambient Soundscape",
       description: "Environmental sound design for immersive installation",
-      duration: "3:45",
       videoUrl: "/videos/box.mp4",
       tags: ["ambient", "installation", "nature"],
       details: "Created using field recordings and granular synthesis."
@@ -21,7 +22,6 @@ function App() {
       id: 2,
       title: "Game Audio",
       description: "Sound effects and atmospheric audio for indie game",
-      duration: "2:30",
       videoUrl: "/videos/box.mp4",
       tags: ["gaming", "sfx", "atmospheric"],
       details: "A collection of dynamic sound effects."
@@ -31,8 +31,21 @@ function App() {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume / 100
+      
+      const updateTime = () => {
+        setCurrentTime(videoRef.current.currentTime)
+        setDuration(videoRef.current.duration)
+      }
+
+      videoRef.current.addEventListener('timeupdate', updateTime)
+      videoRef.current.addEventListener('loadedmetadata', updateTime)
+
+      return () => {
+        videoRef.current?.removeEventListener('timeupdate', updateTime)
+        videoRef.current?.removeEventListener('loadedmetadata', updateTime)
+      }
     }
-  }, [volume])
+  }, [volume, activeProject])
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -45,8 +58,24 @@ function App() {
     }
   }
 
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleTimelineClick = (e) => {
+    const bounds = e.currentTarget.getBoundingClientRect()
+    const percent = (e.clientX - bounds.left) / bounds.width
+    if (videoRef.current && duration) {
+      const newTime = percent * duration
+      videoRef.current.currentTime = newTime
+      setCurrentTime(newTime)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-black text-gray-400 font-mono text-sm">
+    <div className="min-h-screen bg-gray-900 text-gray-400 font-mono text-sm">
       {/* Background Video */}
       <div className="fixed inset-0 z-0">
         {activeProject && (
@@ -64,10 +93,10 @@ function App() {
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen">
-        {/* Solid Black Sidebar */}
-        <div className="w-48 bg-black border-r border-gray-800">
+        {/* Sidebar */}
+        <div className="w-48 bg-gray-900">
           {/* Header in sidebar */}
-          <div className="p-4 border-b border-gray-800">
+          <div className="p-4">
             <div className="flex items-center space-x-2 opacity-50">
               <FileAudio className="w-3 h-3" />
               <span className="text-tiny">portfolio</span>
@@ -113,9 +142,9 @@ function App() {
                 <div className="max-w-3xl mx-auto space-y-6">
                   <p className="text-tiny opacity-60">{activeProject.description}</p>
                   
-                  {/* Audio Controls */}
-                  <div className="bg-black/20 p-3 rounded-lg backdrop-blur-sm">
-                    <div className="flex items-center space-x-4">
+                  {/* Video Controls */}
+                  <div className="bg-gray-800/50 p-4 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center space-x-4 mb-2">
                       <button
                         onClick={togglePlay}
                         className="opacity-60 hover:opacity-100 transition-opacity"
@@ -126,7 +155,20 @@ function App() {
                           <Play className="w-3 h-3" />
                         )}
                       </button>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-1">
+                        <span className="text-tiny opacity-50">{formatTime(currentTime)}</span>
+                        <div 
+                          className="flex-1 h-0.5 bg-gray-700 rounded-full cursor-pointer"
+                          onClick={handleTimelineClick}
+                        >
+                          <div 
+                            className="h-full bg-gray-400 rounded-full"
+                            style={{ width: `${(currentTime / duration) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-tiny opacity-50">{formatTime(duration)}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 ml-4">
                         <Volume2 className="w-3 h-3 opacity-60" />
                         <input
                           type="range"
@@ -134,7 +176,7 @@ function App() {
                           max="100"
                           value={volume}
                           onChange={(e) => setVolume(parseInt(e.target.value))}
-                          className="w-16 h-0.5 bg-gray-800 rounded-full appearance-none cursor-pointer"
+                          className="w-24 h-0.5 bg-gray-700 rounded-full appearance-none cursor-pointer"
                         />
                       </div>
                     </div>
@@ -161,7 +203,7 @@ function App() {
             )}
           </div>
 
-          <footer className="fixed bottom-0 left-48 right-0 p-2 bg-transparent">
+          <footer className="fixed bottom-0 left-48 right-0 p-2">
             <div className="text-tiny opacity-30 ml-4">
               -- NORMAL --
             </div>
