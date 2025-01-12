@@ -1,56 +1,265 @@
-import React, { useState } from 'react'
-import { FileAudio, Folder, ChevronRight, X } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X } from 'lucide-react'
+
+// VideoControls Component
+const VideoControls = ({ 
+  isPlaying, 
+  onPlayPause, 
+  duration, 
+  currentTime, 
+  volume,
+  onVolumeChange,
+  onSeek
+}) => {
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  return (
+    <div className="bg-editor-surface/30 p-4 rounded-lg backdrop-blur-[1px]">
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={onPlayPause}
+          className="text-gray-300 hover:text-gray-100 transition-colors"
+        >
+          {isPlaying ? (
+            <Pause className="w-3 h-3" />
+          ) : (
+            <Play className="w-3 h-3" />
+          )}
+        </button>
+        <div className="flex items-center space-x-2 flex-1">
+          <span className="text-xs text-gray-300 min-w-[40px]">
+            {formatTime(currentTime)}
+          </span>
+          <div 
+            className="flex-1 h-0.5 bg-editor-line rounded-full cursor-pointer"
+            onClick={onSeek}
+          >
+            <div 
+              className="h-full bg-gray-400 rounded-full transition-all"
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+            />
+          </div>
+          <span className="text-xs text-gray-300 min-w-[40px]">
+            {formatTime(duration)}
+          </span>
+        </div>
+        <div className="flex items-center space-x-2 ml-4">
+          <Volume2 className="w-3 h-3 text-gray-300" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={volume}
+            onChange={onVolumeChange}
+            className="w-24 h-0.5 rounded-full appearance-none cursor-pointer bg-editor-line"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   const [activeProject, setActiveProject] = useState(null)
-  
-  
-  const layers = Array.from({ length: 8 }, (_, i) => ({
-    id: i + 1,
-    title: `Layer ${i + 1}`,
-    description: `Layer ${i + 1} content description`,
-    videoUrl: `/videos/layer${i + 1}.mp4`,
-    isYouTube: false,
-    tags: ["layer", `l${i + 1}`, "phage"],
-    details: `Detailed content for Layer ${i + 1}.`
-  }))
-const ambience = {
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [volume, setVolume] = useState(80)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [player, setPlayer] = useState(null)
+  const videoRef = useRef(null)
+
+  const ambience = {
     id: 'ambience',
     title: "Ambience: Defense System",
     description: "Defense System ambient sound design",
-    // Replace this with your video ID
-    videoUrl: "VDaXOlNcXT0",  // Example: lofi girl video ID
+    videoUrl: "VDaXOlNcXT0", // Replace with your YouTube video ID
     isYouTube: true,
     tags: ["ambient", "defense", "system"],
     details: "Ambient soundscape design for defense system interface."
   }
+  
+  const layers = [
+    {
+      id: 1,
+      title: "Genesis",
+      description: "The beginning. The origin point of consciousness.",
+      videoUrl: "/videos/layer1.mp4",
+      isYouTube: false,
+      tags: ["origin", "consciousness", "beginning"],
+      details: "Exploration of the fundamental emergence of awareness and existence."
+    },
+    {
+      id: 2,
+      title: "Duality",
+      description: "The split between reality and perception.",
+      videoUrl: "/videos/layer2.mp4",
+      isYouTube: false,
+      tags: ["duality", "perception", "reality"],
+      details: "Investigation of the inherent duality in conscious experience."
+    },
+    {
+      id: 3,
+      title: "Man",
+      description: "The human element in the system.",
+      videoUrl: "/videos/layer3.mp4",
+      isYouTube: false,
+      tags: ["human", "existence", "consciousness"],
+      details: "Examining the role of human consciousness in the system."
+    },
+    {
+      id: 4,
+      title: "Society",
+      description: "The collective consciousness manifested.",
+      videoUrl: "/videos/layer4.mp4",
+      isYouTube: false,
+      tags: ["collective", "society", "structure"],
+      details: "Analysis of collective consciousness patterns and structures."
+    },
+    {
+      id: 5,
+      title: "Delusion",
+      description: "The distortion of perceived reality.",
+      videoUrl: "/videos/layer5.mp4",
+      isYouTube: false,
+      tags: ["illusion", "perception", "distortion"],
+      details: "Exploration of the gaps between reality and its perception."
+    },
+    {
+      id: 6,
+      title: "Altered Machine",
+      description: "The fusion of consciousness and technology.",
+      videoUrl: "/videos/layer6.mp4",
+      isYouTube: false,
+      tags: ["technology", "fusion", "alteration"],
+      details: "Study of the intersection between machine and consciousness."
+    },
+    {
+      id: 7,
+      title: "Imaginator",
+      description: "The creation of new realities.",
+      videoUrl: "/videos/layer7.mp4",
+      isYouTube: false,
+      tags: ["creation", "imagination", "reality"],
+      details: "Investigation of the power to create and shape new realities."
+    },
+    {
+      id: 8,
+      title: "Force",
+      description: "The underlying power that drives all layers.",
+      videoUrl: "/videos/layer8.mp4",
+      isYouTube: false,
+      tags: ["power", "force", "drive"],
+      details: "Examination of the fundamental force behind consciousness and reality."
+    }
+  ]
 
+  useEffect(() => {
+    if (activeProject?.isYouTube) {
+      // Initialize YouTube player
+      window.onYouTubeIframeAPIReady = () => {
+        const newPlayer = new window.YT.Player('youtube-player', {
+          events: {
+            onStateChange: (event) => {
+              setIsPlaying(event.data === window.YT.PlayerState.PLAYING)
+            },
+            onReady: (event) => {
+              setPlayer(event.target)
+              setDuration(event.target.getDuration())
+            }
+          }
+        })
+      }
 
+      if (!window.YT) {
+        const tag = document.createElement('script')
+        tag.src = 'https://www.youtube.com/iframe_api'
+        const firstScriptTag = document.getElementsByTagName('script')[0]
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+      }
+    } else if (videoRef.current) {
+      videoRef.current.volume = volume / 100
+      
+      const updateTime = () => {
+        setCurrentTime(videoRef.current.currentTime)
+        setDuration(videoRef.current.duration)
+      }
 
+      videoRef.current.addEventListener('timeupdate', updateTime)
+      videoRef.current.addEventListener('loadedmetadata', updateTime)
+
+      return () => {
+        videoRef.current?.removeEventListener('timeupdate', updateTime)
+        videoRef.current?.removeEventListener('loadedmetadata', updateTime)
+      }
+    }
+  }, [activeProject])
+
+  const handlePlayPause = () => {
+    if (activeProject?.isYouTube && player) {
+      if (isPlaying) {
+        player.pauseVideo()
+      } else {
+        player.playVideo()
+      }
+    } else if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause()
+      } else {
+        videoRef.current.play()
+      }
+    }
+    setIsPlaying(!isPlaying)
+  }
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseInt(e.target.value)
+    setVolume(newVolume)
+    if (activeProject?.isYouTube && player) {
+      player.setVolume(newVolume)
+    } else if (videoRef.current) {
+      videoRef.current.volume = newVolume / 100
+    }
+  }
+
+  const handleSeek = (e) => {
+    const bounds = e.currentTarget.getBoundingClientRect()
+    const percent = (e.clientX - bounds.left) / bounds.width
+    const newTime = percent * duration
+
+    if (activeProject?.isYouTube && player) {
+      player.seekTo(newTime)
+    } else if (videoRef.current) {
+      videoRef.current.currentTime = newTime
+    }
+    setCurrentTime(newTime)
+  }
 
   return (
     <div className="min-h-screen bg-[#030303] text-gray-300 font-mono text-sm">
-      {/* Background Video/Content */}
+      {/* Background Video */}
       <div className="fixed inset-0 z-0">
-        {activeProject && activeProject.isYouTube ? (
-          <div className="relative w-full h-full bg-black">
-            <iframe 
-              src={`https://www.youtube.com/embed/${activeProject.videoUrl}?autoplay=1&controls=0&showinfo=0&modestbranding=1&loop=1&playlist=${activeProject.videoUrl}`}
-              className="absolute w-full h-full"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              style={{ opacity: 0.3 }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#030303] via-transparent to-[#030303] pointer-events-none" />
+        {activeProject && (
+          <div className="relative w-full h-full">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#030303] to-transparent opacity-80" />
+            {activeProject.isYouTube ? (
+              <div id="youtube-player" className="w-full h-full opacity-25" />
+            ) : (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover opacity-25 mix-blend-luminosity"
+                loop
+                playsInline
+                muted={false}
+              >
+                <source src={activeProject.videoUrl} type="video/mp4" />
+              </video>
+            )}
+            <div className="absolute inset-0 bg-[#030303]/50" />
           </div>
-        ) : activeProject && (
-          <video
-            src={activeProject.videoUrl}
-            className="w-full h-full object-cover opacity-30"
-            autoPlay
-            loop
-            muted
-          />
         )}
       </div>
 
@@ -126,6 +335,16 @@ const ambience = {
                     {activeProject.description}
                   </p>
                   
+                  <VideoControls 
+                    isPlaying={isPlaying}
+                    onPlayPause={handlePlayPause}
+                    duration={duration}
+                    currentTime={currentTime}
+                    volume={volume}
+                    onVolumeChange={handleVolumeChange}
+                    onSeek={handleSeek}
+                  />
+
                   <div className="space-x-2">
                     {activeProject.tags.map(tag => (
                       <span 
