@@ -16,12 +16,16 @@ export default {
       },
       colors: {
         'editor': {
-          'bg': '#050505',
-          'line': '#0F0F0F',
-          'text': '#666666',
-          'comment': '#333333',
-          'selection': '#1A1A1A',
+          'bg': '#030303',        // Almost black background
+          'surface': '#040404',   // Slightly lighter for elements
+          'line': '#070707',      // Very subtle lines
+          'text': '#444444',      // Darker text for better contrast
+          'highlight': '#222222', // Highlight color
+          'active': '#333333'     // Active state color
         }
+      },
+      backgroundColor: {
+        'overlay': 'rgba(3, 3, 3, 0.85)' // Very dark overlay
       }
     },
   },
