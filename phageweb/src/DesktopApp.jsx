@@ -358,7 +358,7 @@ function App() {
           <div className="p-4">
             <div className="flex items-center space-x-2 mb-6">
               <Folder className="w-3 h-3 text-gray-300" />
-              <span className="text-xs text-gray-300">Layers</span>
+              <span className="text-xs text-gray-300">Layers OST</span>
             </div>
             <ul className="space-y-4">
               {layers.map(layer => (
