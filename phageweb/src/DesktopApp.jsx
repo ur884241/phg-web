@@ -62,7 +62,7 @@ const VideoControls = ({
   )
 }
 
-function App() {
+function DesktopApp() {
   const [activeProject, setActiveProject] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(80)
@@ -70,6 +70,97 @@ function App() {
   const [duration, setDuration] = useState(0)
   const [youtubePlayer, setYoutubePlayer] = useState(null)
   const videoRef = useRef(null)
+
+  const cleanupActiveVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+      videoRef.current.src = ''
+      videoRef.current.load()
+    }
+    if (youtubePlayer) {
+      youtubePlayer.stopVideo()
+    }
+    setIsPlaying(false)
+    setCurrentTime(0)
+    setDuration(0)
+  }
+
+  const handleProjectSelect = (project) => {
+    cleanupActiveVideo()
+    setActiveProject(project)
+  }
+
+  const handlePlayPause = () => {
+    if (!activeProject) return
+
+    if (activeProject.isYouTube && youtubePlayer) {
+      try {
+        if (isPlaying) {
+          youtubePlayer.pauseVideo()
+        } else {
+          youtubePlayer.playVideo()
+        }
+      } catch (e) {
+        console.error('YouTube player error:', e)
+        cleanupActiveVideo()
+      }
+    } else if (videoRef.current) {
+      try {
+        if (isPlaying) {
+          videoRef.current.pause()
+        } else {
+          videoRef.current.play().catch(e => {
+            console.error('Video play error:', e)
+            cleanupActiveVideo()
+          })
+        }
+        setIsPlaying(!isPlaying)
+      } catch (e) {
+        console.error('Video control error:', e)
+        cleanupActiveVideo()
+      }
+    }
+  }
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseInt(e.target.value)
+    setVolume(newVolume)
+    if (activeProject?.isYouTube && youtubePlayer) {
+      youtubePlayer.setVolume(newVolume)
+    } else if (videoRef.current) {
+      videoRef.current.volume = newVolume / 100
+    }
+  }
+
+  const handleSeek = (e) => {
+    const bounds = e.currentTarget.getBoundingClientRect()
+    const percent = (e.clientX - bounds.left) / bounds.width
+    const newTime = percent * duration
+
+    if (activeProject?.isYouTube && youtubePlayer) {
+      youtubePlayer.seekTo(newTime)
+    } else if (videoRef.current) {
+      videoRef.current.currentTime = newTime
+    }
+    setCurrentTime(newTime)
+  }
+
+
+
+const phageIndex = {
+  id: 'phage-index',
+  title: "Phage",
+  description: "A journey through consciousness and machine.",
+  videoUrl: null, // No video needed for index, but you can add one if you want
+  isYouTube: false,
+  tags: ["2024", "consciousness", "machine"],
+  details: "An exploration of the layers between reality and perception.\n\nOriginal Soundtrack • 2024"
+}
+
+
+
+
 
   const ambience = {
     id: 'ambience',
@@ -91,15 +182,15 @@ function App() {
     details: "Solstice music track with visual accompaniment."
   }
 
- const will = {
-  id: 'will',
-  title: "Will",
-  description: "Opening track from the album 'Will' (2024)",
-  videoUrl: "/videos/will.mp4",
-  isYouTube: false,
-  tags: ["will", "album", "2024"],
-  details: "First track from the Will album. A manifestation of pure will and intent."
-} 
+  const will = {
+    id: 'will',
+    title: "Will",
+    description: "Opening track from the album 'Will' (2024)",
+    videoUrl: "/videos/will.mp4",
+    isYouTube: false,
+    tags: ["will", "album", "2024"],
+    details: "First track from the Will album. A manifestation of pure will and intent."
+  }
 
   const layers = [
     {
@@ -176,150 +267,176 @@ function App() {
     }
   ]
 
-  useEffect(() => {
-    if (activeProject?.isYouTube) {
-      if (!youtubePlayer) {
-        const player = new YT.Player('youtube-player', {
-          height: '100%',
-          width: '100%',
-          videoId: activeProject.videoUrl,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            showinfo: 0,
-            modestbranding: 1,
-            loop: 1,
-            playlist: activeProject.videoUrl,
-            enablejsapi: 1
+useEffect(() => {
+  if (!activeProject) {
+    cleanupActiveVideo()
+    return
+  }
+
+  let videoCleanup
+
+  if (activeProject.isYouTube) {
+    if (!youtubePlayer) {
+      const player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: activeProject.videoUrl,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          showinfo: 0,
+          modestbranding: 1,
+          loop: 1,
+          playlist: activeProject.videoUrl,
+          enablejsapi: 1
+        },
+        events: {
+          onReady: (event) => {
+            setYoutubePlayer(event.target)
+            setDuration(event.target.getDuration())
+            event.target.setVolume(volume)
           },
-          events: {
-            onReady: (event) => {
-              setYoutubePlayer(event.target)
-              setDuration(event.target.getDuration())
-              event.target.setVolume(volume)
-            },
-            onStateChange: (event) => {
-              setIsPlaying(event.data === YT.PlayerState.PLAYING)
-            }
+          onStateChange: (event) => {
+            setIsPlaying(event.data === YT.PlayerState.PLAYING)
           }
-        })
-      } else {
-        youtubePlayer.loadVideoById(activeProject.videoUrl)
-      }
-
-      const interval = setInterval(() => {
-        if (youtubePlayer) {
-          setCurrentTime(youtubePlayer.getCurrentTime())
         }
-      }, 1000)
-
-      return () => clearInterval(interval)
-    } else if (videoRef.current) {
-      videoRef.current.volume = volume / 100
-      
-      const updateTime = () => {
-        setCurrentTime(videoRef.current.currentTime)
-        setDuration(videoRef.current.duration)
-      }
-
-      videoRef.current.addEventListener('timeupdate', updateTime)
-      videoRef.current.addEventListener('loadedmetadata', updateTime)
-
-      return () => {
-        videoRef.current?.removeEventListener('timeupdate', updateTime)
-        videoRef.current?.removeEventListener('loadedmetadata', updateTime)
+      })
+    } else {
+      try {
+        youtubePlayer.loadVideoById({
+          videoId: activeProject.videoUrl,
+          startSeconds: 0
+        })
+      } catch (e) {
+        console.error('YouTube player load error:', e)
       }
     }
-  }, [activeProject, youtubePlayer])
 
-  const handlePlayPause = () => {
-    if (activeProject?.isYouTube && youtubePlayer) {
-      if (isPlaying) {
-        youtubePlayer.pauseVideo()
-      } else {
-        youtubePlayer.playVideo()
+    const interval = setInterval(() => {
+      if (youtubePlayer?.getCurrentTime) {
+        setCurrentTime(youtubePlayer.getCurrentTime())
       }
-    } else if (videoRef.current) {
-      if (isPlaying) {
+    }, 1000)
+
+    videoCleanup = () => {
+      clearInterval(interval)
+      if (youtubePlayer?.stopVideo) {
+        try {
+          youtubePlayer.stopVideo()
+        } catch (e) {
+          console.error('YouTube cleanup error:', e)
+        }
+      }
+    }
+  } else if (videoRef.current) {
+    videoRef.current.src = activeProject.videoUrl
+    videoRef.current.load()
+    videoRef.current.volume = volume / 100
+
+    const updateTime = () => {
+      setCurrentTime(videoRef.current.currentTime)
+      setDuration(videoRef.current.duration)
+    }
+
+    const handleError = (e) => {
+      console.error('Video loading error:', e)
+      cleanupActiveVideo()
+    }
+
+    videoRef.current.addEventListener('timeupdate', updateTime)
+    videoRef.current.addEventListener('loadedmetadata', updateTime)
+    videoRef.current.addEventListener('error', handleError)
+
+    videoCleanup = () => {
+      if (videoRef.current) {
+        videoRef.current.removeEventListener('timeupdate', updateTime)
+        videoRef.current.removeEventListener('loadedmetadata', updateTime)
+        videoRef.current.removeEventListener('error', handleError)
         videoRef.current.pause()
-      } else {
-        videoRef.current.play()
+        videoRef.current.currentTime = 0
+        videoRef.current.src = ''
+        videoRef.current.load()
       }
-      setIsPlaying(!isPlaying)
     }
   }
 
-  const handleVolumeChange = (e) => {
-    const newVolume = parseInt(e.target.value)
-    setVolume(newVolume)
-    if (activeProject?.isYouTube && youtubePlayer) {
-      youtubePlayer.setVolume(newVolume)
-    } else if (videoRef.current) {
-      videoRef.current.volume = newVolume / 100
+  return () => {
+    if (videoCleanup) {
+      videoCleanup()
     }
+    setIsPlaying(false)
+    setCurrentTime(0)
+    setDuration(0)
   }
+}, [activeProject, volume])
 
-  const handleSeek = (e) => {
-    const bounds = e.currentTarget.getBoundingClientRect()
-    const percent = (e.clientX - bounds.left) / bounds.width
-    const newTime = percent * duration
 
-    if (activeProject?.isYouTube && youtubePlayer) {
-      youtubePlayer.seekTo(newTime)
-    } else if (videoRef.current) {
-      videoRef.current.currentTime = newTime
-    }
-    setCurrentTime(newTime)
-  }
 
   return (
     <div className="min-h-screen bg-[#030303] text-gray-300 font-mono text-sm">
-      {/* Background Video */}
-      <div className="fixed inset-0 z-0">
-        {activeProject && (
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#030303] to-transparent opacity-80" />
-            {activeProject.isYouTube ? (
-              <div id="youtube-player" className="w-full h-full" />
-            ) : (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                loop
-                playsInline
-                muted={false}
-              >
-                <source src={activeProject.videoUrl} type="video/mp4" />
-              </video>
-            )}
-          </div>
-        )}
+     {/* Background Video */}
+<div className="fixed inset-0 z-0">
+  {activeProject ? (
+    <div className="relative w-full h-full">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] to-transparent opacity-80" />
+      {activeProject.isYouTube ? (
+        <div id="youtube-player" className="w-full h-full" />
+      ) : (
+        activeProject.videoUrl && (
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            loop
+            playsInline
+            muted={false}
+          >
+            <source src={activeProject.videoUrl} type="video/mp4" />
+          </video>
+        )
+      )}
+    </div>
+  ) : (
+    <div className="flex items-center justify-center h-full">
+      <div className="space-y-6 text-center">
+        <h1 className="text-xl text-gray-300 font-light tracking-wider">P H A G E</h1>
+        <p className="text-xs text-gray-400 max-w-md">
+          A journey through consciousness and machine.
+        </p>
+        <p className="text-tiny text-gray-500">
+          Original Soundtrack • 2024
+        </p>
       </div>
-
+    </div>
+  )}
+</div>
       {/* Content */}
       <div className="relative z-10 flex min-h-screen">
         {/* Sidebar */}
         <div className="w-48 bg-[#030303]">
           {/* Header */}
-          <div className="p-4">
-            <div className="flex items-center space-x-2">
-              <FileAudio className="w-3 h-3 text-gray-300" />
-              <span className="text-xs text-gray-300">Phage</span>
-            </div>
-          </div>
-
-          {/* Ambience Project */}
+    <div className="p-4">
+  <div className="flex items-center space-x-2">
+    <FileAudio className="w-3 h-3 text-gray-300" />
+    <span 
+      className="text-xs text-gray-300 cursor-pointer hover:text-gray-200 transition-colors"
+      onClick={() => handleProjectSelect(phageIndex)}
+    >
+      Phage
+    </span>
+  </div>
+</div>   
+{/* Will Project */}
           <div className="p-4">
             <div 
               className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                activeProject?.id === 'ambience' 
+                activeProject?.id === 'will' 
                   ? 'text-gray-100' 
                   : 'text-gray-400 hover:text-gray-200'
               }`}
-              onClick={() => setActiveProject(ambience)}
+              onClick={() => handleProjectSelect(will)}
             >
               <ChevronRight className="w-3 h-3" />
-              <span className="text-xs">{ambience.title}</span>
+              <span className="text-xs">{will.title}</span>
             </div>
           </div>
 
@@ -331,28 +448,12 @@ function App() {
                   ? 'text-gray-100' 
                   : 'text-gray-400 hover:text-gray-200'
               }`}
-              onClick={() => setActiveProject(solstice)}
+              onClick={() => handleProjectSelect(solstice)}
             >
               <ChevronRight className="w-3 h-3" />
               <span className="text-xs">{solstice.title}</span>
             </div>
           </div>
-
-
-{/* Will Project */}
-<div className="p-4">
-  <div 
-    className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-      activeProject?.id === 'will' 
-        ? 'text-gray-100' 
-        : 'text-gray-400 hover:text-gray-200'
-    }`}
-    onClick={() => setActiveProject(will)}
-  >
-    <ChevronRight className="w-3 h-3" />
-    <span className="text-xs">{will.title}</span>
-  </div>
-</div>
 
           {/* Layers */}
           <div className="p-4">
@@ -369,13 +470,30 @@ function App() {
                       ? 'text-gray-100' 
                       : 'text-gray-400 hover:text-gray-200'
                   }`}
-                  onClick={() => setActiveProject(layer)}
+                  onClick={() => handleProjectSelect(layer)}
                 >
                   <ChevronRight className="w-3 h-3" />
                   <span className="text-xs">{layer.title}</span>
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Ambience Project */}
+          <div className="p-4">
+
+
+<div 
+              className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                activeProject?.id === 'ambience' 
+                  ? 'text-gray-100' 
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+              onClick={() => handleProjectSelect(ambience)}
+            >
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-xs">{ambience.title}</span>
+            </div>
           </div>
         </div>
 
@@ -390,7 +508,7 @@ function App() {
                   </h2>
                   <X 
                     className="w-3 h-3 cursor-pointer text-gray-400 hover:text-gray-200"
-                    onClick={() => setActiveProject(null)}
+                    onClick={() => handleProjectSelect(null)}
                   />
                 </div>
 
@@ -430,7 +548,7 @@ function App() {
             )}
           </div>
 
-           <footer className="fixed bottom-0 left-48 right-0 p-2">
+          <footer className="fixed bottom-0 left-48 right-0 p-2">
             <div className="text-xs text-gray-600 ml-4">
               -- NORMAL --
             </div>
@@ -441,4 +559,6 @@ function App() {
   )
 }
 
-export default App
+export default DesktopApp
+
+

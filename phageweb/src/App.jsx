@@ -1,12 +1,8 @@
-import React from 'react';
-import { useDeviceDetect } from './DeviceDetector';
-import DesktopApp from './DesktopApp';
-import MobileApp from './MobileApp';
+import React from 'react'
+import DesktopApp from './DesktopApp'
 
 function App() {
-  const { isMobile } = useDeviceDetect();
-  
-  return isMobile ? <MobileApp /> : <DesktopApp />;
+  return <DesktopApp />
 }
 
-export default App;
+export default App
