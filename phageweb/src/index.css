@@ -53,6 +53,32 @@ video {
   filter: contrast(1.1) brightness(0.9);
   mix-blend-mode: luminosity;
 }
+:root {
+  --color-nier-bright: #D3CFC7;
+  --color-nier-text: #B4AF9A;
+  --color-nier-dim: #8C8165;
+}
 
+/* Text color classes */
+.text-nier-bright {
+  color: var(--color-nier-bright);
+}
 
+.text-nier-text {
+  color: var(--color-nier-text);
+}
 
+.text-nier-dim {
+  color: var(--color-nier-dim);
+}
+
+/* Hover classes */
+.hover\:text-nier-bright:hover {
+  color: var(--color-nier-bright);
+}
+
+/* Add any Japanese font */
+.text-jp {
+  color: var(--color-nier-dim);
+  font-family: "MS Mincho", serif;
+}

@@ -63,7 +63,31 @@ const VideoControls = ({
 }
 
 function DesktopApp() {
-  const [activeProject, setActiveProject] = useState(null)
+
+const phageIndex = {
+  id: 'phage-index',
+  title: "P H A G E",  // Spaced out for NieR style
+  description: `A journey through consciousness and machine.`,
+  videoUrl: "/videos/phage.mp4",
+  isYouTube: false,
+  tags: ["2024", "consciousness", "machine"],
+  details: `[ Project Status: Active ]
+  
+--------------------------------
+
+P  H  A  G  E
+プロジェクト  フェージ
+
+--------------------------------
+
+An exploration of the layers
+between reality and perception.
+
+Original Soundtrack • 2024
+System Ver. 1.0`
+}
+
+  const [activeProject, setActiveProject] = useState(phageIndex)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(80)
   const [currentTime, setCurrentTime] = useState(0)
@@ -148,15 +172,6 @@ function DesktopApp() {
 
 
 
-const phageIndex = {
-  id: 'phage-index',
-  title: "Phage",
-  description: "A journey through consciousness and machine.",
-  videoUrl: null, // No video needed for index, but you can add one if you want
-  isYouTube: false,
-  tags: ["2024", "consciousness", "machine"],
-  details: "An exploration of the layers between reality and perception.\n\nOriginal Soundtrack • 2024"
-}
 
 
 
@@ -374,37 +389,48 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-[#030303] text-gray-300 font-mono text-sm">
-     {/* Background Video */}
+    {/* Background Video */}
 <div className="fixed inset-0 z-0">
   {activeProject ? (
-    <div className="relative w-full h-full">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030303] to-transparent opacity-80" />
-      {activeProject.isYouTube ? (
-        <div id="youtube-player" className="w-full h-full" />
-      ) : (
-        activeProject.videoUrl && (
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            loop
-            playsInline
-            muted={false}
-          >
-            <source src={activeProject.videoUrl} type="video/mp4" />
-          </video>
-        )
-      )}
-    </div>
+  <div className="relative w-full h-full">
+  <div className="absolute inset-0 bg-gradient-to-b from-[#030303] to-transparent opacity-80" />
+  {activeProject.isYouTube ? (
+    <div id="youtube-player" className="w-full h-full" />
   ) : (
-    <div className="flex items-center justify-center h-full">
-      <div className="space-y-6 text-center">
-        <h1 className="text-xl text-gray-300 font-light tracking-wider">P H A G E</h1>
-        <p className="text-xs text-gray-400 max-w-md">
-          A journey through consciousness and machine.
-        </p>
-        <p className="text-tiny text-gray-500">
-          Original Soundtrack • 2024
-        </p>
+    <video
+      ref={videoRef}
+      className="w-full h-full object-cover"
+      loop
+      autoPlay
+      playsInline
+      muted={false}
+    >
+      <source src={activeProject.videoUrl} type="video/mp4" />
+    </video>
+  )}
+</div> 
+					
+) : (
+    <div className="relative w-full h-full">
+      <video
+        className="w-full h-full object-cover opacity-30"
+        loop
+        autoPlay
+        muted
+        playsInline
+      >
+        <source src="/videos/phage.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="space-y-6 text-center z-10">
+          <h1 className="text-6xl text-nier-text tracking-wider">P H A G E</h1>
+          <p className="text-nier-dim  max-w-md">
+            A journey through consciousness and machine.
+          </p>
+          <p className="text-nier-dim ">
+            Original Soundtrack • 2024
+          </p>
+        </div>
       </div>
     </div>
   )}
@@ -497,50 +523,66 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Main Content */}
+      {/* Main Content */}
         <div className="flex-1">
           <div className="p-8">
             {activeProject ? (
-              <div className="space-y-8">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-sm font-normal text-gray-200">
-                    {activeProject.title}
-                  </h2>
-                  <X 
-                    className="w-3 h-3 cursor-pointer text-gray-400 hover:text-gray-200"
-                    onClick={() => handleProjectSelect(null)}
-                  />
-                </div>
-
-                <div className="max-w-3xl mx-auto space-y-6">
-                  <p className="text-xs text-gray-300">
-                    {activeProject.description}
-                  </p>
-                  
-                  <VideoControls 
-                    isPlaying={isPlaying}
-                    onPlayPause={handlePlayPause}
-                    duration={duration}
-                    currentTime={currentTime}
-                    volume={volume}
-                    onVolumeChange={handleVolumeChange}
-                    onSeek={handleSeek}
-                  />
-
-                  <div className="space-x-2">
-                    {activeProject.tags.map(tag => (
-                      <span 
-                        key={tag}
-                        className="inline-block px-2 py-0.5 text-xs text-gray-400"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+              activeProject.id === 'phage-index' ? (
+                <div className="space-y-12 text-center mt-20">
+                  <h1 className="text-6xl text-gray-300 font-light tracking-[0.5em] leading-relaxed">
+                    P H A G E
+                  </h1>
+                  <div className="space-y-8">
+                    <p className="text-base text-gray-400 max-w-md mx-auto leading-relaxed">
+                      A journey through consciousness and machine.
+                    </p>
+                    <div className="text-sm text-gray-500 space-y-6 leading-relaxed mt-12">
+                      <p className="font-mono">プロジェクト フェージ</p>
+                      <p className="mt-8">Original Soundtrack • 2024</p>
+                      <p className="text-[10px] mt-4">System Ver. 1.0</p>
+                    </div>
                   </div>
-                  
-                  <p className="text-xs text-gray-300">{activeProject.details}</p>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-8">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-sm font-normal text-gray-200">
+                      {activeProject.title}
+                    </h2>
+                    <X 
+                      className="w-3 h-3 cursor-pointer text-gray-400 hover:text-gray-200"
+                      onClick={() => handleProjectSelect(null)}
+                    />
+                  </div>
+                  <div className="max-w-3xl mx-auto space-y-6">
+                    <p className="text-xs text-gray-300">
+                      {activeProject.description}
+                    </p>
+                    
+                    <VideoControls 
+                      isPlaying={isPlaying}
+                      onPlayPause={handlePlayPause}
+                      duration={duration}
+                      currentTime={currentTime}
+                      volume={volume}
+                      onVolumeChange={handleVolumeChange}
+                      onSeek={handleSeek}
+                    />
+                    <div className="space-x-2">
+                      {activeProject.tags.map(tag => (
+                        <span 
+                          key={tag}
+                          className="inline-block px-2 py-0.5 text-xs text-gray-400"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <p className="text-xs text-gray-300">{activeProject.details}</p>
+                  </div>
+                </div>
+              )
             ) : (
               <div className="flex items-center justify-center h-full">
                 <span className="text-xs text-gray-600">select a layer</span>
@@ -560,5 +602,3 @@ useEffect(() => {
 }
 
 export default DesktopApp
-
-
