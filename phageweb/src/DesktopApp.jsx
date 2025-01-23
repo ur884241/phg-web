@@ -534,11 +534,10 @@ useEffect(() => {
                   </h1>
                   <div className="space-y-8">
                     <p className="text-base text-gray-400 max-w-md mx-auto leading-relaxed">
-                      Sound machine consciousness.
+											Signal-grammar
                     </p>
                     <div className="text-sm text-gray-500 space-y-6 leading-relaxed mt-12">
-                      <p className="font-mono">HELLO</p>
-                      <p className="mt-8">Original Sound Design• 2025</p>
+                                           <p className="mt-8">Original Sound Design• 2025</p>
                       <p className="text-[10px] mt-4">System Ver. 1.0</p>
                     </div>
                   </div>
