@@ -425,10 +425,10 @@ useEffect(() => {
         <div className="space-y-6 text-center z-10">
           <h1 className="text-4xl text-nier-text tracking-wider">P H A G E</h1>
           <p className="text-nier-dim  max-w-md">
-            A journey through consciousness and machine.
+										Sound Design Grammar
           </p>
           <p className="text-nier-dim ">
-            Original Sound Design • 2025
+            Original works • 2025
           </p>
         </div>
       </div>
