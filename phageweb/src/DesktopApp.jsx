@@ -423,12 +423,12 @@ useEffect(() => {
       </video>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="space-y-6 text-center z-10">
-          <h1 className="text-6xl text-nier-text tracking-wider">P H A G E</h1>
+          <h1 className="text-4xl text-nier-text tracking-wider">P H A G E</h1>
           <p className="text-nier-dim  max-w-md">
             A journey through consciousness and machine.
           </p>
           <p className="text-nier-dim ">
-            Original Soundtrack • 2024
+            Original Sound Design • 2025
           </p>
         </div>
       </div>
@@ -534,11 +534,11 @@ useEffect(() => {
                   </h1>
                   <div className="space-y-8">
                     <p className="text-base text-gray-400 max-w-md mx-auto leading-relaxed">
-                      A journey through consciousness and machine.
+                      Sound machine consciousness.
                     </p>
                     <div className="text-sm text-gray-500 space-y-6 leading-relaxed mt-12">
-                      <p className="font-mono">プロジェクト フェージ</p>
-                      <p className="mt-8">Original Soundtrack • 2024</p>
+                      <p className="font-mono">HELLO</p>
+                      <p className="mt-8">Original Sound Design• 2025</p>
                       <p className="text-[10px] mt-4">System Ver. 1.0</p>
                     </div>
                   </div>
