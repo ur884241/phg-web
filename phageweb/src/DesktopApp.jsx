@@ -76,7 +76,7 @@ const phageIndex = {
 --------------------------------
 
 P  H  A  G  E
-プロジェクト  フェージ
+
 
 --------------------------------
 
@@ -212,7 +212,7 @@ System Ver. 1.0`
       id: 1,
       title: "Genesis",
       description: "The beginning. The origin point of consciousness.",
-      videoUrl: "/videos/layer1.mp4",
+      videoUrl: "/videos/layer1.wav",
       isYouTube: false,
       tags: ["origin", "consciousness", "beginning"],
       details: "Exploration of the fundamental emergence of awareness and existence."
