@@ -221,20 +221,20 @@ const layers = [
     {
       id: 1,
       title: "Genesis",
-      description: "The beginning. The origin point of consciousness.",
-      videoUrl: "/videos/layer1.wav",
+      description: "The beginning.",
+      videoUrl: "/videos/layer1.mp4",
       isYouTube: false,
       tags: ["origin", "consciousness", "beginning"],
-      details: "Exploration of the fundamental emergence of awareness and existence."
+      details: "Fundamental existence."
     },
     {
       id: 2,
-      title: "Duality",
-      description: "The split between reality and perception.",
+      title: "Division",
+      description: "The split within.",
       videoUrl: "/videos/layer2.mp4",
       isYouTube: false,
       tags: ["duality", "perception", "reality"],
-      details: "Investigation of the inherent duality in conscious experience."
+      details: "Inherent duality."
     },
     {
       id: 3,
@@ -243,16 +243,16 @@ const layers = [
       videoUrl: "/videos/layer3.mp4",
       isYouTube: false,
       tags: ["human", "existence", "consciousness"],
-      details: "Examining the role of human consciousness in the system."
+      details: "The 'role' itself."
     },
     {
       id: 4,
       title: "Society",
-      description: "The collective consciousness manifested.",
+      description: "The collective manifested.",
       videoUrl: "/videos/layer4.mp4",
       isYouTube: false,
       tags: ["collective", "society", "structure"],
-      details: "Analysis of collective consciousness patterns and structures."
+      details: "Patterns and structures."
     },
     {
       id: 5,
@@ -261,7 +261,7 @@ const layers = [
       videoUrl: "/videos/layer5.mp4",
       isYouTube: false,
       tags: ["illusion", "perception", "distortion"],
-      details: "Exploration of the gaps between reality and its perception."
+      details: "Gaps."
     },
     {
       id: 6,
@@ -279,7 +279,7 @@ const layers = [
       videoUrl: "/videos/layer7.mp4",
       isYouTube: false,
       tags: ["creation", "imagination", "reality"],
-      details: "Investigation of the power to create and shape new realities."
+      details: "The power to create and shape new realities."
     },
     {
       id: 8,
@@ -288,7 +288,7 @@ const layers = [
       videoUrl: "/videos/layer8.mp4",
       isYouTube: false,
       tags: ["power", "force", "drive"],
-      details: "Examination of the fundamental force behind consciousness and reality."
+      details: "Stregth."
     }
   ]
 
@@ -296,111 +296,137 @@ const layers = [
 
 
 
+useEffect(() => {
+  if (!activeProject) {
+    cleanupActiveVideo();
+    return;
+  }
 
-  useEffect(() => {
-    if (!activeProject) {
-      cleanupActiveVideo();
-      return;
-    }
+  let videoCleanup;
 
-    let videoCleanup;
+  if (activeProject.isYouTube) {
+    if (!youtubePlayer) {
+      const player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: activeProject.videoUrl,
+        playerVars: {
+          autoplay: 0, // Disable autoplay
+          controls: 1, // Show controls (including full screen button)
+          showinfo: 0,
+          modestbranding: 1,
+          loop: 1,
+          playlist: activeProject.videoUrl,
+          enablejsapi: 1,
+          fs: 1, // Allow full screen mode
+        },
+        events: {
+          onReady: (event) => {
+            setYoutubePlayer(event.target);
+            setDuration(event.target.getDuration());
+            event.target.setVolume(volume);
 
-    if (activeProject.isYouTube) {
-      if (!youtubePlayer) {
-        const player = new YT.Player('youtube-player', {
-          height: '100%',
-          width: '100%',
-          videoId: activeProject.videoUrl,
-          playerVars: {
-            autoplay: 0, // Disable autoplay
-            controls: 0,
-            showinfo: 0,
-            modestbranding: 1,
-            loop: 1,
-            playlist: activeProject.videoUrl,
-            enablejsapi: 1
-          },
-          events: {
-            onReady: (event) => {
-              setYoutubePlayer(event.target);
-              setDuration(event.target.getDuration());
-              event.target.setVolume(volume);
-            },
-            onStateChange: (event) => {
-              setIsPlaying(event.data === YT.PlayerState.PLAYING);
+            // Force the YouTube player to fill the available space
+            const playerElement = document.getElementById('youtube-player');
+            if (playerElement) {
+              playerElement.style.width = 'calc(100vw - 12rem)'; // Adjust for sidebar width
+              playerElement.style.height = '100%';
+              playerElement.style.position = 'fixed';
+              playerElement.style.top = '0';
+              playerElement.style.left = '12rem'; // Adjust for sidebar width
+              playerElement.style.objectFit = 'cover'; // Force the video to cover the entire space
+              playerElement.style.overflow = 'hidden'; // Hide any overflow
             }
-          }
+          },
+          onStateChange: (event) => {
+            setIsPlaying(event.data === YT.PlayerState.PLAYING);
+
+            // Ensure the player maintains full coverage during playback
+            const playerElement = document.getElementById('youtube-player');
+            if (playerElement) {
+              playerElement.style.width = 'calc(100vw - 12rem)'; // Adjust for sidebar width
+              playerElement.style.height = '100%';
+            }
+          },
+        },
+      });
+    } else {
+      try {
+        youtubePlayer.loadVideoById({
+          videoId: activeProject.videoUrl,
+          startSeconds: 0,
         });
-      } else {
-        try {
-          youtubePlayer.loadVideoById({
-            videoId: activeProject.videoUrl,
-            startSeconds: 0
-          });
-        } catch (e) {
-          console.error('YouTube player load error:', e);
-        }
+      } catch (e) {
+        console.error('YouTube player load error:', e);
       }
-
-      const interval = setInterval(() => {
-        if (youtubePlayer?.getCurrentTime) {
-          setCurrentTime(youtubePlayer.getCurrentTime());
-        }
-      }, 1000);
-
-      videoCleanup = () => {
-        clearInterval(interval);
-        if (youtubePlayer?.stopVideo) {
-          try {
-            youtubePlayer.stopVideo();
-          } catch (e) {
-            console.error('YouTube cleanup error:', e);
-          }
-        }
-      };
-    } else if (videoRef.current) {
-      videoRef.current.src = activeProject.videoUrl;
-      videoRef.current.load();
-      videoRef.current.volume = volume / 100;
-
-      const updateTime = () => {
-        setCurrentTime(videoRef.current.currentTime);
-        setDuration(videoRef.current.duration);
-      };
-
-      const handleError = (e) => {
-        console.error('Video loading error:', e);
-        cleanupActiveVideo();
-      };
-
-      videoRef.current.addEventListener('timeupdate', updateTime);
-      videoRef.current.addEventListener('loadedmetadata', updateTime);
-      videoRef.current.addEventListener('error', handleError);
-
-      videoCleanup = () => {
-        if (videoRef.current) {
-          videoRef.current.removeEventListener('timeupdate', updateTime);
-          videoRef.current.removeEventListener('loadedmetadata', updateTime);
-          videoRef.current.removeEventListener('error', handleError);
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0;
-          videoRef.current.src = '';
-          videoRef.current.load();
-        }
-      };
     }
 
-    return () => {
-      if (videoCleanup) {
-        videoCleanup();
+    const interval = setInterval(() => {
+      if (youtubePlayer?.getCurrentTime) {
+        setCurrentTime(youtubePlayer.getCurrentTime());
       }
-      setIsPlaying(false);
-      setCurrentTime(0);
-      setDuration(0);
-    };
-  }, [activeProject]);
+    }, 1000);
 
-return (
+    videoCleanup = () => {
+      clearInterval(interval);
+      if (youtubePlayer?.stopVideo) {
+        try {
+          youtubePlayer.stopVideo();
+        } catch (e) {
+          console.error('YouTube cleanup error:', e);
+        }
+      }
+    };
+  } else if (videoRef.current) {
+    videoRef.current.src = activeProject.videoUrl;
+    videoRef.current.load();
+    videoRef.current.volume = volume / 100;
+
+    const updateTime = () => {
+      setCurrentTime(videoRef.current.currentTime);
+      setDuration(videoRef.current.duration);
+    };
+
+    const handleError = (e) => {
+      console.error('Video loading error:', e);
+      cleanupActiveVideo();
+    };
+
+    videoRef.current.addEventListener('timeupdate', updateTime);
+    videoRef.current.addEventListener('loadedmetadata', updateTime);
+    videoRef.current.addEventListener('error', handleError);
+
+    videoCleanup = () => {
+      if (videoRef.current) {
+        videoRef.current.removeEventListener('timeupdate', updateTime);
+        videoRef.current.removeEventListener('loadedmetadata', updateTime);
+        videoRef.current.removeEventListener('error', handleError);
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+        videoRef.current.src = '';
+        videoRef.current.load();
+      }
+    };
+  }
+
+  return () => {
+    if (videoCleanup) {
+      videoCleanup();
+    }
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+  };
+}, [activeProject]);
+
+
+
+
+
+
+
+
+	return (
     <div className="min-h-screen bg-[#030303] text-gray-300 font-mono text-sm overflow-hidden"> {/* Add overflow-hidden here */}
      
 {/* Background Video */}
@@ -412,11 +438,15 @@ return (
 
       {/* Video Player */}
       {activeProject.isYouTube ? (
-        <div id="youtube-player" className="w-full h-full" />
+        <div
+          id="youtube-player"
+          className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)]" // Adjust for sidebar width
+          style={{ overflow: 'hidden' }} // Hide any overflow
+        />
       ) : (
         <video
           ref={videoRef}
-          className="w-full h-full object-cover"
+          className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)] object-cover" // Adjust for sidebar width
           loop
           playsInline
           muted={!isPlaying} // Mute only when not playing (optional)
@@ -430,7 +460,7 @@ return (
       {/* Default Background Video */}
       <video
         ref={videoRef}
-        className="w-full h-full object-cover opacity-30"
+        className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)] object-cover opacity-30" // Adjust for sidebar width
         loop
         playsInline
         muted={!isPlaying} // Mute only when not playing (optional)
@@ -440,7 +470,11 @@ return (
     </div>
   )}
 </div>
-{/* Content */}
+
+
+
+
+	{/* Content */}
       <div className="relative z-10 flex min-h-screen">
         {/* Sidebar */}
         <div className="w-48 bg-[#030303] h-screen overflow-y-auto"> {/* Add h-screen and overflow-y-auto for sidebar scrolling */}
@@ -462,7 +496,32 @@ return (
 
 
 
-          {/* Will Project */}
+                 {/* Layers */}
+          <div className="p-4">
+            <div className="flex items-center space-x-2 mb-6">
+              <Folder className="w-3 h-3 text-gray-300" />
+              <span className="text-xs text-gray-300">Layers OST</span>
+            </div>
+            <ul className="space-y-4">
+              {layers.map(layer => (
+                <li 
+                  key={layer.id}
+                  className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                    activeProject?.id === layer.id 
+                      ? 'text-gray-100' 
+                      : 'text-gray-400 hover:text-gray-200'
+                  }`}
+                  onClick={() => handleProjectSelect(layer)}
+                >
+                  <ChevronRight className="w-3 h-3" />
+                  <span className="text-xs">{layer.title}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+
+   {/* Will Project */}
           <div className="p-4">
             <div 
               className={`flex items-center space-x-2 cursor-pointer transition-colors ${
@@ -492,29 +551,7 @@ return (
             </div>
           </div>
 
-          {/* Layers */}
-          <div className="p-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <Folder className="w-3 h-3 text-gray-300" />
-              <span className="text-xs text-gray-300">Layers OST</span>
-            </div>
-            <ul className="space-y-4">
-              {layers.map(layer => (
-                <li 
-                  key={layer.id}
-                  className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                    activeProject?.id === layer.id 
-                      ? 'text-gray-100' 
-                      : 'text-gray-400 hover:text-gray-200'
-                  }`}
-                  onClick={() => handleProjectSelect(layer)}
-                >
-                  <ChevronRight className="w-3 h-3" />
-                  <span className="text-xs">{layer.title}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+
 
           {/* Ambience: Defense System */}
           <div className="p-4">
@@ -562,7 +599,7 @@ return (
             </h1>
             <div className="space-y-8">
               <p className="text-base text-gray-400 max-w-md mx-auto leading-relaxed">
-                Signal-grammar
+                Signal-syntax
               </p>
               <div className="text-sm text-gray-500 space-y-6 leading-relaxed">
                 <p>Original Sound Design • 2025</p>
