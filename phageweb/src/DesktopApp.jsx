@@ -184,7 +184,7 @@ const handleVolumeChange = (e) => {
     videoUrl: "VDaXOlNcXT0",
     isYouTube: true,
     tags: ["ambient", "defense", "system"],
-    details: "Ambient soundscape design for defense system interface."
+    details: "Sundscape design for imaginary interface."
   };
 
   const ambienceHangatyr = {
@@ -204,7 +204,7 @@ const handleVolumeChange = (e) => {
     videoUrl: "/videos/8.mp4",
     isYouTube: false,
     tags: ["music", "solstice", "8"],
-    details: "Solstice music track with visual accompaniment."
+    details: "Solstice song with visual accompaniment."
   };
 
   const will = {
@@ -214,7 +214,7 @@ const handleVolumeChange = (e) => {
     videoUrl: "/videos/will.mp4",
     isYouTube: false,
     tags: ["will", "album", "2024"],
-    details: "First track from the Will album. A manifestation of pure will and intent."
+    details: "Raw intent."
   };
 
 const layers = [
@@ -225,7 +225,7 @@ const layers = [
       videoUrl: "/videos/layer1.mp4",
       isYouTube: false,
       tags: ["origin", "consciousness", "beginning"],
-      details: "Fundamental existence."
+      details: ""
     },
     {
       id: 2,
@@ -270,7 +270,7 @@ const layers = [
       videoUrl: "/videos/layer6.mp4",
       isYouTube: false,
       tags: ["technology", "fusion", "alteration"],
-      details: "Study of the intersection between machine and consciousness."
+      details: "Higher."
     },
     {
       id: 7,
@@ -279,7 +279,7 @@ const layers = [
       videoUrl: "/videos/layer7.mp4",
       isYouTube: false,
       tags: ["creation", "imagination", "reality"],
-      details: "The power to create and shape new realities."
+      details: "Shape new worlds."
     },
     {
       id: 8,
