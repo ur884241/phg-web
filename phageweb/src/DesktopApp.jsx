@@ -599,7 +599,7 @@ useEffect(() => {
             </h1>
             <div className="space-y-8">
               <p className="text-base text-gray-400 max-w-md mx-auto leading-relaxed">
-                Signal-syntax
+                signal-syntax
               </p>
               <div className="text-sm text-gray-500 space-y-6 leading-relaxed">
                 <p>Original Sound Design • 2025</p>
@@ -610,7 +610,7 @@ useEffect(() => {
 
           {/* Video Controls for phage-index */}
           <div className="w-full max-w-3xl mt-8"> {/* Add margin-top to separate from content */}
-            <VideoControls
+           <VideoControls
               isPlaying={isPlaying}
               onPlayPause={handlePlayPause}
               duration={duration}
