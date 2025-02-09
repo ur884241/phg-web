@@ -256,7 +256,7 @@ const layers = [
     },
     {
       id: 5,
-      title: "V Delusion",
+      title: "V Dellusion",
       description: "The distortion of perceived reality.",
       videoUrl: "/videos/layer5.mp4",
       isYouTube: false,
@@ -274,7 +274,7 @@ const layers = [
     },
     {
       id: 7,
-      title: "VII Imaginator",
+      title: "VII Imaginateur",
       description: "The creation of new realities.",
       videoUrl: "/videos/layer7.mp4",
       isYouTube: false,
