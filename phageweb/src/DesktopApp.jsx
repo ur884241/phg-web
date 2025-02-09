@@ -594,7 +594,7 @@ useEffect(() => {
           <div className="p-4 mt-8">
             <div className="flex items-center justify-center space-x-8">
               <a 
-                href="https://open.spotify.com/your-profile" 
+                href="https://open.spotify.com/artist/69586kzZpLeJAyQCdwZcfz" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#6A665E] hover:text-[#9E988A] transition-colors"
