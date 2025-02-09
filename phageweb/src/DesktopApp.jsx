@@ -220,7 +220,7 @@ const handleVolumeChange = (e) => {
 const layers = [
     {
       id: 1,
-      title: "Genesis",
+      title: "I Genesis",
       description: "The beginning.",
       videoUrl: "/videos/layer1.mp4",
       isYouTube: false,
@@ -229,7 +229,7 @@ const layers = [
     },
     {
       id: 2,
-      title: "Division",
+      title: "II Division",
       description: "The split within.",
       videoUrl: "/videos/layer2.mp4",
       isYouTube: false,
@@ -238,7 +238,7 @@ const layers = [
     },
     {
       id: 3,
-      title: "Man",
+      title: "III Man",
       description: "The human element in the system.",
       videoUrl: "/videos/layer3.mp4",
       isYouTube: false,
@@ -247,7 +247,7 @@ const layers = [
     },
     {
       id: 4,
-      title: "Society",
+      title: "IV Society",
       description: "The collective manifested.",
       videoUrl: "/videos/layer4.mp4",
       isYouTube: false,
@@ -256,7 +256,7 @@ const layers = [
     },
     {
       id: 5,
-      title: "Delusion",
+      title: "V Delusion",
       description: "The distortion of perceived reality.",
       videoUrl: "/videos/layer5.mp4",
       isYouTube: false,
@@ -265,7 +265,7 @@ const layers = [
     },
     {
       id: 6,
-      title: "Altered Machine",
+      title: "VI Altered Machine",
       description: "The fusion of consciousness and technology.",
       videoUrl: "/videos/layer6.mp4",
       isYouTube: false,
@@ -274,7 +274,7 @@ const layers = [
     },
     {
       id: 7,
-      title: "Imaginator",
+      title: "VII Imaginator",
       description: "The creation of new realities.",
       videoUrl: "/videos/layer7.mp4",
       isYouTube: false,
@@ -283,7 +283,7 @@ const layers = [
     },
     {
       id: 8,
-      title: "Force",
+      title: "VII Force",
       description: "The underlying power that drives all layers.",
       videoUrl: "/videos/layer8.mp4",
       isYouTube: false,
@@ -604,7 +604,7 @@ useEffect(() => {
                 </svg>
               </a>
               <a 
-                href="https://instagram.com/your-profile" 
+                href="https://www.instagram.com/8phage/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#6A665E] hover:text-[#9E988A] transition-colors"
@@ -614,7 +614,7 @@ useEffect(() => {
                 </svg>
               </a>
               <a 
-                href="https://x.com/your-profile" 
+                href="https://x.com/8Phage" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#6A665E] hover:text-[#9E988A] transition-colors"
