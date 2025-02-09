@@ -521,69 +521,74 @@ useEffect(() => {
           </div>
 
 
-   {/* Will Project */}
+ {/* Songs Folder */}
           <div className="p-4">
-            <div 
-              className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                activeProject?.id === 'will' 
-                  ? 'text-gray-100' 
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => handleProjectSelect(will)}
-            >
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-xs">{will.title}</span>
+            <div className="flex items-center space-x-2 mb-6">
+              <Folder className="w-3 h-3 text-gray-300" />
+              <span className="text-xs text-gray-300">Songs</span>
             </div>
+            <ul className="space-y-4 ml-4">
+              {/* Will */}
+              <li 
+                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                  activeProject?.id === 'will' 
+                    ? 'text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+                onClick={() => handleProjectSelect(will)}
+              >
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-xs">{will.title}</span>
+              </li>
+              {/* Solstice (8) */}
+              <li 
+                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                  activeProject?.id === 'solstice' 
+                    ? 'text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+                onClick={() => handleProjectSelect(solstice)}
+              >
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-xs">{solstice.title}</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Solstice Project */}
+          {/* Ambience Folder */}
           <div className="p-4">
-            <div 
-              className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                activeProject?.id === 'solstice' 
-                  ? 'text-gray-100' 
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => handleProjectSelect(solstice)}
-            >
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-xs">{solstice.title}</span>
+            <div className="flex items-center space-x-2 mb-6">
+              <Folder className="w-3 h-3 text-gray-300" />
+              <span className="text-xs text-gray-300">Ambience</span>
             </div>
+            <ul className="space-y-4 ml-4">
+              {/* Defense System */}
+              <li 
+                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                  activeProject?.id === 'ambience' 
+                    ? 'text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+                onClick={() => handleProjectSelect(ambience)}
+              >
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-xs">Defense System</span>
+              </li>
+              {/* Hangatýr */}
+              <li 
+                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                  activeProject?.id === 'ambience-hangatyr' 
+                    ? 'text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+                onClick={() => handleProjectSelect(ambienceHangatyr)}
+              >
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-xs">Hangatýr</span>
+              </li>
+            </ul>
           </div>
-
-
-
-          {/* Ambience: Defense System */}
-          <div className="p-4">
-            <div 
-              className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                activeProject?.id === 'ambience' 
-                  ? 'text-gray-100' 
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => handleProjectSelect(ambience)}
-            >
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-xs">{ambience.title}</span>
-            </div>
-          </div>
-
-          {/* Ambience: Hangatýr */}
-          <div className="p-4">
-            <div 
-              className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                activeProject?.id === 'ambience-hangatyr' 
-                  ? 'text-gray-100' 
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => handleProjectSelect(ambienceHangatyr)}
-            >
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-xs">{ambienceHangatyr.title}</span>
-            </div>
-          </div>
-        </div>
-
+        </div> 
 
 
 
@@ -594,7 +599,7 @@ useEffect(() => {
       activeProject.id === 'phage-index' ? ( // phage-index section
         <div className="flex flex-col items-center justify-center h-screen space-y-8"> {/* Center content */}
           <div className="space-y-12 text-center">
-            <h1 className="text-3xl text-gray-300 font-light tracking-[0.5em] leading-relaxed">
+            <h1 className="text-2xl text-gray-300 font-light tracking-[0.5em] leading-relaxed">
               P H A G E
             </h1>
             <div className="space-y-8">
@@ -680,3 +685,4 @@ useEffect(() => {
 }
 
 export default DesktopApp;
+
