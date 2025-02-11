@@ -126,17 +126,20 @@ System Ver. 1.0`
   };
 
   const handlePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play().catch(e => {
-          console.error('Video play error:', e);
-        });
-      }
-      setIsPlaying(!isPlaying);
+  if (videoRef.current) {
+    console.log('Video element:', videoRef.current); // Debugging
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play().catch(e => {
+        console.error('Video play error:', e); // Debugging
+      });
     }
-  };
+    setIsPlaying(!isPlaying);
+  } else {
+    console.error('Video ref is null'); // Debugging
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#030303] text-[#8C847A] font-mono text-sm overflow-hidden">
@@ -155,12 +158,17 @@ System Ver. 1.0`
 
       {/* Play/Pause Button */}
       <div className="fixed bottom-4 right-4 z-10">
-        <button
-          onClick={handlePlayPause}
-          className="p-2 bg-[#8C847A] rounded-full text-[#030303] hover:bg-[#9E988A] transition-colors"
-        >
-          {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-        </button>
+      
+Copy
+<button
+  onClick={() => {
+    console.log('Play button clicked'); // Debugging
+    handlePlayPause();
+  }}
+  className="p-2 bg-[#8C847A] rounded-full text-[#030303] hover:bg-[#9E988A] transition-colors"
+>
+  {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+</button>
       </div>
     </div>
   );
