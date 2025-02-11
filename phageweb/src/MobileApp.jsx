@@ -122,36 +122,37 @@ System Ver. 1.0`
   };
 
   const handlePlayPause = () => {
-    if (!activeProject) return;
+  if (!activeProject) return;
 
-    if (activeProject.isYouTube && youtubePlayer) {
-      try {
-        if (isPlaying) {
-          youtubePlayer.pauseVideo();
-        } else {
-          youtubePlayer.playVideo();
-        }
-      } catch (e) {
-        console.error('YouTube player error:', e);
-        cleanupActiveVideo();
+  if (activeProject.isYouTube && youtubePlayer) {
+    try {
+      if (isPlaying) {
+        youtubePlayer.pauseVideo();
+      } else {
+        youtubePlayer.playVideo();
       }
-    } else if (videoRef.current) {
-      try {
-        if (isPlaying) {
-          videoRef.current.pause();
-        } else {
-          videoRef.current.play().catch(e => {
-            console.error('Video play error:', e);
-            cleanupActiveVideo();
-          });
-        }
-        setIsPlaying(!isPlaying);
-      } catch (e) {
-        console.error('Video control error:', e);
-        cleanupActiveVideo();
-      }
+    } catch (e) {
+      console.error('YouTube player error:', e);
+      cleanupActiveVideo();
     }
-  };
+  } else if (videoRef.current) {
+    try {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        // Ensure the video is played directly on user interaction
+        videoRef.current.play().catch(e => {
+          console.error('Video play error:', e);
+          cleanupActiveVideo();
+        });
+      }
+      setIsPlaying(!isPlaying);
+    } catch (e) {
+      console.error('Video control error:', e);
+      cleanupActiveVideo();
+    }
+  }
+};
 
   const handleVolumeChange = (e) => {
     const newVolume = parseInt(e.target.value);
