@@ -81,7 +81,7 @@ Original Soundtrack • 2024
 System Ver. 1.0`
   };
 
-  const [layersExpanded, setLayersExpanded] = useState(false);
+  const [layersExpanded, setLayersExpanded] = useState(true);
   const [songsExpanded, setSongsExpanded] = useState(false);
   const [ambienceExpanded, setAmbienceExpanded] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
