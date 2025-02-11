@@ -641,7 +641,7 @@ useEffect(() => {
         <div className="flex flex-col items-center justify-center h-screen space-y-8"> {/* Center content */}
           <div className="space-y-12 text-center">
             <h1 className="text-2xl text-[#C2B59B] font-['Cormorant_Garamond'] font-light tracking-[0.5em] leading-relaxed">
-              P H A G E
+              φάγος
             </h1>
             <div className="space-y-8">
               <p className="text-base text-[#6A665E] max-w-md mx-auto leading-relaxed">
