@@ -146,14 +146,15 @@ System Ver. 1.0`
       {/* Video Player */}
       <div className="fixed inset-0 z-0">
         <video
-          ref={videoRef}
-          className="fixed top-0 left-0 h-screen w-full object-cover"
-          loop
-          playsInline
-          muted={!isPlaying} // Mute only when not playing
-        >
-          <source src="/videos/phage.mp4" type="video/mp4" />
-        </video>
+  ref={videoRef}
+  className="fixed top-0 left-0 h-screen w-full object-cover"
+  loop
+  playsInline // Required for iOS
+  muted={!isPlaying} // Mute when not playing
+>
+  <source src="/videos/phage.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
       </div>
 
       {/* Play/Pause Button */}
