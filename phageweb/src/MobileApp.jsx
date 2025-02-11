@@ -63,6 +63,10 @@ const VideoControls = ({
 };
 
 function MobileApp() {
+
+ const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null);
+
   const phageIndex = {
     id: 'phage-index',
     title: "P H A G E",
@@ -121,39 +125,46 @@ System Ver. 1.0`
     setSidebarOpen(false); // Close sidebar on project select
   };
 
-  const handlePlayPause = () => {
-  if (!activeProject) return;
-
-  if (activeProject.isYouTube && youtubePlayer) {
-    try {
-      if (isPlaying) {
-        youtubePlayer.pauseVideo();
-      } else {
-        youtubePlayer.playVideo();
-      }
-    } catch (e) {
-      console.error('YouTube player error:', e);
-      cleanupActiveVideo();
-    }
-  } else if (videoRef.current) {
-    try {
+   const handlePlayPause = () => {
+    if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        // Ensure the video is played directly on user interaction
         videoRef.current.play().catch(e => {
           console.error('Video play error:', e);
-          cleanupActiveVideo();
         });
       }
       setIsPlaying(!isPlaying);
-    } catch (e) {
-      console.error('Video control error:', e);
-      cleanupActiveVideo();
     }
-  }
-};
+  };
 
+  return (
+    <div className="min-h-screen bg-[#030303] text-[#8C847A] font-mono text-sm overflow-hidden">
+      {/* Video Player */}
+      <div className="fixed inset-0 z-0">
+        <video
+          ref={videoRef}
+          className="fixed top-0 left-0 h-screen w-full object-cover"
+          loop
+          playsInline
+          muted={!isPlaying} // Mute only when not playing
+        >
+          <source src="/videos/phage.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      {/* Play/Pause Button */}
+      <div className="fixed bottom-4 right-4 z-10">
+        <button
+          onClick={handlePlayPause}
+          className="p-2 bg-[#8C847A] rounded-full text-[#030303] hover:bg-[#9E988A] transition-colors"
+        >
+          {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+        </button>
+      </div>
+    </div>
+  );
+}
   const handleVolumeChange = (e) => {
     const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
