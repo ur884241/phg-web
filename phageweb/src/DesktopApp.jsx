@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X } from 'lucide-react';
 
+
+
+
+
+
 const VideoControls = ({ 
   isPlaying, 
   onPlayPause, 
@@ -80,6 +85,10 @@ between reality and perception.
 Original Soundtrack • 2024
 System Ver. 1.0`
   };
+
+const [layersExpanded, setLayersExpanded] = useState(true);
+const [songsExpanded, setSongsExpanded] = useState(false);
+const [ambienceExpanded, setAmbienceExpanded] = useState(false);
 
   const [activeProject, setActiveProject] = useState(phageIndex);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -283,7 +292,7 @@ const layers = [
     },
     {
       id: 8,
-      title: "VII Force",
+      title: "VIII Force",
       description: "The underlying power that drives all layers.",
       videoUrl: "/videos/layer8.mp4",
       isYouTube: false,
@@ -495,101 +504,131 @@ useEffect(() => {
 
 
 
+{/* Layers */}
+<div className="p-4">
+  <div 
+    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    onClick={() => setLayersExpanded(!layersExpanded)}
+  >
+    <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${layersExpanded ? 'rotate-90' : ''}`} />
+    <Folder className="w-3 h-3 text-[#8C847A]" />
+    <span className="text-xs text-[#8C847A]">Layers OST</span>
+  </div>
+  {layersExpanded && (
+    <ul className="space-y-4">
+      {layers.map(layer => (
+        <li 
+          key={layer.id}
+          className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+            activeProject?.id === layer.id 
+              ? 'text-[#9E988A]' 
+              : 'text-[#6A665E] hover:text-[#9E988A]'
+          }`}
+          onClick={() => handleProjectSelect(layer)}
+        >
+          <ChevronRight className="w-3 h-3" />
+          <span className="text-xs flex items-center space-x-2">
+            <span className={
+              layer.title.split(' ')[0] === 'I' ? 'text-[#8FB8E0]' :
+              layer.title.split(' ')[0] === 'II' ? 'text-[#E08F8F]' :
+              layer.title.split(' ')[0] === 'III' ? 'text-[#90E08F]' :
+              layer.title.split(' ')[0] === 'IV' ? 'text-[#E0CF8F]' :
+              layer.title.split(' ')[0] === 'V' ? 'text-[#B88FE0]' :
+              layer.title.split(' ')[0] === 'VI' ? 'text-[#8FE0CF]' :
+              layer.title.split(' ')[0] === 'VII' ? 'text-[#E08FCF]' :
+              'text-[#CFE08F]'
+            }>
+              {layer.title.split(' ')[0]}
+            </span>
+            <span className="text-[#8C847A]">
+              {layer.title.split(' ').slice(1).join(' ')}
+            </span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
-                 {/* Layers */}
-          <div className="p-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <Folder className="w-3 h-3 text-[#8C847A]" />
-              <span className="text-xs text-[#8C847A]">Layers OST</span>
-            </div>
-            <ul className="space-y-4">
-              {layers.map(layer => (
-                <li 
-                  key={layer.id}
-                  className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                    activeProject?.id === layer.id 
-                      ? 'text-[#9E988A]' 
-                      : 'text-[#6A665E] hover:text-[#9E988A]'
-                  }`}
-                  onClick={() => handleProjectSelect(layer)}
-                >
-                  <ChevronRight className="w-3 h-3" />
-                  <span className="text-xs">{layer.title}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+{/* Songs Folder */}
+<div className="p-4">
+  <div 
+    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    onClick={() => setSongsExpanded(!songsExpanded)}
+  >
+    <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${songsExpanded ? 'rotate-90' : ''}`} />
+    <Folder className="w-3 h-3 text-[#8C847A]" />
+    <span className="text-xs text-[#8C847A]">Songs</span>
+  </div>
+  {songsExpanded && (
+    <ul className="space-y-4 ml-4">
+      {/* Will */}
+      <li 
+        className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+          activeProject?.id === 'will' 
+            ? 'text-[#9E988A]' 
+            : 'text-[#6A665E] hover:text-[#9E988A]'
+        }`}
+        onClick={() => handleProjectSelect(will)}
+      >
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-xs">{will.title}</span>
+      </li>
+      {/* Solstice (8) */}
+      <li 
+        className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+          activeProject?.id === 'solstice' 
+            ? 'text-[#9E988A]' 
+            : 'text-[#6A665E] hover:text-[#9E988A]'
+        }`}
+        onClick={() => handleProjectSelect(solstice)}
+      >
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-xs">{solstice.title}</span>
+      </li>
+    </ul>
+  )}
+</div>
 
-
- {/* Songs Folder */}
-          <div className="p-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <Folder className="w-3 h-3 text-[#8C847A]" />
-              <span className="text-xs text-[#8C847A]">Songs</span>
-            </div>
-            <ul className="space-y-4 ml-4">
-              {/* Will */}
-              <li 
-                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                  activeProject?.id === 'will' 
-                    ? 'text-[#9E988A]' 
-                    : 'text-[#6A665E] hover:text-[#9E988A]'
-                }`}
-                onClick={() => handleProjectSelect(will)}
-              >
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-xs">{will.title}</span>
-              </li>
-              {/* Solstice (8) */}
-              <li 
-                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                  activeProject?.id === 'solstice' 
-                    ? 'text-[#9E988A]' 
-                    : 'text-[#6A665E] hover:text-[#9E988A]'
-                }`}
-                onClick={() => handleProjectSelect(solstice)}
-              >
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-xs">{solstice.title}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Ambience Folder */}
-          <div className="p-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <Folder className="w-3 h-3 text-[#8C847A]" />
-              <span className="text-xs text-[#8C847A]">Ambience</span>
-            </div>
-            <ul className="space-y-4 ml-4">
-              {/* Defense System */}
-              <li 
-                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                  activeProject?.id === 'ambience' 
-                    ? 'text-[#9E988A]' 
-                    : 'text-[#6A665E] hover:text-[#9E988A]'
-                }`}
-                onClick={() => handleProjectSelect(ambience)}
-              >
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-xs">Defense System</span>
-              </li>
-              {/* Hangatýr */}
-              <li 
-                className={`flex items-center space-x-2 cursor-pointer transition-colors ${
-                  activeProject?.id === 'ambience-hangatyr' 
-                    ? 'text-[#9E988A]' 
-                    : 'text-[#6A665E] hover:text-[#9E988A]'
-                }`}
-                onClick={() => handleProjectSelect(ambienceHangatyr)}
-              >
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-xs">Hangatýr</span>
-              </li>
-            </ul>
-          </div>
-
-
+{/* Ambience Folder */}
+<div className="p-4">
+  <div 
+    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    onClick={() => setAmbienceExpanded(!ambienceExpanded)}
+  >
+    <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${ambienceExpanded ? 'rotate-90' : ''}`} />
+    <Folder className="w-3 h-3 text-[#8C847A]" />
+    <span className="text-xs text-[#8C847A]">Ambience</span>
+  </div>
+  {ambienceExpanded && (
+    <ul className="space-y-4 ml-4">
+      {/* Defense System */}
+      <li 
+        className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+          activeProject?.id === 'ambience' 
+            ? 'text-[#9E988A]' 
+            : 'text-[#6A665E] hover:text-[#9E988A]'
+        }`}
+        onClick={() => handleProjectSelect(ambience)}
+      >
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-xs">Defense System</span>
+      </li>
+      {/* Hangatýr */}
+      <li 
+        className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+          activeProject?.id === 'ambience-hangatyr' 
+            ? 'text-[#9E988A]' 
+            : 'text-[#6A665E] hover:text-[#9E988A]'
+        }`}
+        onClick={() => handleProjectSelect(ambienceHangatyr)}
+      >
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-xs">Hangatýr</span>
+      </li>
+    </ul>
+  )}
+</div>
  {/* Social Media Links */}
           <div className="p-4 mt-8">
             <div className="flex items-center justify-center space-x-8">
