@@ -125,7 +125,7 @@ System Ver. 1.0`
     setSidebarOpen(false); // Close sidebar on project select
   };
 
-   const handlePlayPause = () => {
+  const handlePlayPause = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
