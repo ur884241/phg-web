@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ReactPlayer from 'react-player';
 import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X, Menu } from 'lucide-react';
 
 function MobileApp() {
@@ -16,8 +15,8 @@ function MobileApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
 
-  // Ref for ReactPlayer
-  const playerRef = useRef(null);
+  // Ref for the video element
+  const videoRef = useRef(null);
 
   // Project data
   const phageIndex = {
@@ -157,19 +156,29 @@ System Ver. 1.0`,
   const handleProjectSelect = (project) => {
     setActiveProject(project);
     setSidebarOpen(false); // Close sidebar on project select
+    setIsPlaying(false); // Reset playback state
   };
 
   // Handle play/pause
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play().catch((e) => {
+          console.error('Video play error:', e);
+        });
+      }
+      setIsPlaying(!isPlaying);
+    }
   };
 
   // Handle volume change
   const handleVolumeChange = (e) => {
     const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
-    if (playerRef.current) {
-      playerRef.current.volume = newVolume / 100;
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume / 100;
     }
   };
 
@@ -178,8 +187,8 @@ System Ver. 1.0`,
     const bounds = e.currentTarget.getBoundingClientRect();
     const percent = (e.clientX - bounds.left) / bounds.width;
     const newTime = percent * duration;
-    if (playerRef.current) {
-      playerRef.current.seekTo(newTime);
+    if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
     }
     setCurrentTime(newTime);
   };
@@ -234,6 +243,35 @@ System Ver. 1.0`,
       </div>
     );
   };
+
+  // Update video source when activeProject changes
+  useEffect(() => {
+    if (activeProject && videoRef.current) {
+      videoRef.current.src = activeProject.videoUrl;
+      videoRef.current.load();
+      videoRef.current.volume = volume / 100;
+    }
+  }, [activeProject, volume]);
+
+  // Add event listeners for time updates
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const updateTime = () => setCurrentTime(video.currentTime);
+      const updateDuration = () => setDuration(video.duration);
+      const handleError = (e) => console.error('Video error:', e);
+
+      video.addEventListener('timeupdate', updateTime);
+      video.addEventListener('loadedmetadata', updateDuration);
+      video.addEventListener('error', handleError);
+
+      return () => {
+        video.removeEventListener('timeupdate', updateTime);
+        video.removeEventListener('loadedmetadata', updateDuration);
+        video.removeEventListener('error', handleError);
+      };
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#030303] text-[#8C847A] font-mono text-sm overflow-hidden">
