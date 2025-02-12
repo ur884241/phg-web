@@ -431,6 +431,8 @@ System Ver. 1.0`,
           )}
         </div>
 
+
+
         {/* Social Media Links */}
         <div className="p-4 mt-8">
           <div className="flex items-center justify-center space-x-8">
@@ -556,20 +558,21 @@ System Ver. 1.0`,
 
       {/* Video Player */}
       <div className="fixed inset-0 z-0">
-        <ReactPlayer
-          ref={playerRef}
-          url={activeProject?.videoUrl}
-          playing={isPlaying}
+        <video
+          ref={videoRef}
+          className="fixed top-0 left-0 h-screen w-full object-cover"
           loop
-          controls={false}
-          width="100%"
-          height="100%"
-          playsinline
-          muted={!isPlaying}
-          onProgress={({ playedSeconds }) => setCurrentTime(playedSeconds)}
-          onDuration={(duration) => setDuration(duration)}
-          onError={(e) => console.error('React Player error:', e)}
-        />
+          playsInline // Required for iOS
+          muted={!isPlaying} // Mute when not playing
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+          onLoadedMetadata={(e) => setDuration(e.target.duration)}
+          onError={(e) => console.error('Video error:', e)}
+        >
+          <source src={activeProject?.videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
   );
