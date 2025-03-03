@@ -444,21 +444,26 @@ System Ver. 1.0`
                   {layers.map(layer => (
                     <li
                       key={layer.id}
-                      className="flex items-center space-x-2 cursor-pointer"
+                      className="flex items-center space-x-2 cursor-pointer text-[#6A665E] hover:text-[#9E988A]"
                       onClick={() => handleProjectSelect(layer)}
                     >
                       <ChevronRight className="w-3 h-3" />
-                      <span className={`text-xs ${
-                        layer.title.split(' ')[0] === 'I' ? 'text-[#8FB8E0]' :
-                        layer.title.split(' ')[0] === 'II' ? 'text-[#E08F8F]' :
-                        layer.title.split(' ')[0] === 'III' ? 'text-[#90E08F]' :
-                        layer.title.split(' ')[0] === 'IV' ? 'text-[#E0CF8F]' :
-                        layer.title.split(' ')[0] === 'V' ? 'text-[#B88FE0]' :
-                        layer.title.split(' ')[0] === 'VI' ? 'text-[#8FE0CF]' :
-                        layer.title.split(' ')[0] === 'VII' ? 'text-[#E08FCF]' :
-                        'text-[#CFE08F]'
-                      }`}>
-                        {layer.title}
+                      <span className="text-xs">
+                        <span className={
+                          layer.title.split(' ')[0] === 'I' ? 'text-[#8FB8E0]' :
+                          layer.title.split(' ')[0] === 'II' ? 'text-[#E08F8F]' :
+                          layer.title.split(' ')[0] === 'III' ? 'text-[#90E08F]' :
+                          layer.title.split(' ')[0] === 'IV' ? 'text-[#E0CF8F]' :
+                          layer.title.split(' ')[0] === 'V' ? 'text-[#B88FE0]' :
+                          layer.title.split(' ')[0] === 'VI' ? 'text-[#8FE0CF]' :
+                          layer.title.split(' ')[0] === 'VII' ? 'text-[#E08FCF]' :
+                          'text-[#CFE08F]'
+                        }>
+                          {layer.title.split(' ')[0]}
+                        </span>
+                        <span className="ml-2">
+                          {layer.title.split(' ').slice(1).join(' ')}
+                        </span>
                       </span>
                     </li>
                   ))}
