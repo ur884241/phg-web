@@ -19,11 +19,7 @@ function App() {
     };
   }, []);
 
-  return (
-    <div>
-      {isMobile ? <MobileApp /> : <DesktopApp />}
-    </div>
-  );
+  return isMobile ? <MobileApp /> : <DesktopApp />;
 }
 
 export default App;

@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X } from 'lucide-react';
-
-
-
-
-
+import { blogEntries } from './data/blogData';
 
 const VideoControls = ({ 
   isPlaying, 
@@ -61,6 +57,24 @@ const VideoControls = ({
             onChange={onVolumeChange}
             className="w-24 h-0.5 rounded-full appearance-none cursor-pointer bg-editor-line"
           />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BlogColumn = () => {
+  return (
+    <div className="w-48 h-screen overflow-y-auto fixed right-0 top-0 z-20 text-[#8C847A] text-[10px] p-4">
+      <div className="space-y-4">
+        <h3 className="text-[#9E988A] font-semibold">Recent Updates</h3>
+        <div className="space-y-3">
+          {blogEntries.map((entry, index) => (
+            <div key={entry.date} className={`opacity-${100 - (index * 10)}`}>
+              <p className="text-[#C2B59B]">{entry.date}</p>
+              <p>{entry.content}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -214,6 +228,16 @@ const handleVolumeChange = (e) => {
     isYouTube: false,
     tags: ["music", "solstice", "8"],
     details: "Solstice song with visual accompaniment."
+  };
+
+  const laudes = {
+    id: 'laudes',
+    title: "Laudes",
+    description: "Ode to Life",
+    videoUrl: "/videos/laudes.mp4",
+    isYouTube: false,
+    tags: ["music", "vivaldi", "laudes"],
+    details: "A musical journey through time and space."
   };
 
   const will = {
@@ -449,16 +473,16 @@ useEffect(() => {
       {activeProject.isYouTube ? (
         <div
           id="youtube-player"
-          className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)]" // Adjust for sidebar width
-          style={{ overflow: 'hidden' }} // Hide any overflow
+          className="fixed top-0 left-48 h-screen w-[calc(100vw-24rem)]" // Adjusted for both sidebars
+          style={{ overflow: 'hidden' }}
         />
       ) : (
         <video
           ref={videoRef}
-          className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)] object-cover" // Adjust for sidebar width
+          className="fixed top-0 left-48 h-screen w-[calc(100vw-24rem)] object-cover" // Adjusted for both sidebars
           loop
           playsInline
-          muted={!isPlaying} // Mute only when not playing (optional)
+          muted={!isPlaying}
         >
           <source src={activeProject.videoUrl} type="video/mp4" />
         </video>
@@ -469,10 +493,10 @@ useEffect(() => {
       {/* Default Background Video */}
       <video
         ref={videoRef}
-        className="fixed top-0 left-48 h-screen w-[calc(100vw-12rem)] object-cover opacity-30" // Adjust for sidebar width
+        className="fixed top-0 left-48 h-screen w-[calc(100vw-24rem)] object-cover opacity-30" // Adjusted for both sidebars
         loop
         playsInline
-        muted={!isPlaying} // Mute only when not playing (optional)
+        muted={!isPlaying}
       >
         <source src="/videos/phage.mp4" type="video/mp4" />
       </video>
@@ -486,9 +510,9 @@ useEffect(() => {
 	{/* Content */}
       <div className="relative z-10 flex min-h-screen">
         {/* Sidebar */}
-        <div className="w-48 bg-[#030303] h-screen overflow-y-auto"> {/* Add h-screen and overflow-y-auto for sidebar scrolling */}
+        <div className="w-48 bg-[#030303] h-screen overflow-y-auto relative z-30"> {/* Added z-30 */}
           {/* Header */}
-          <div className="p-4">
+          <div className="p-6">
             <div className="flex items-center space-x-2">
               <FileAudio className="w-3 h-3 text-[#8C847A]" />
               <span 
@@ -507,15 +531,15 @@ useEffect(() => {
 {/* Layers */}
 <div className="p-4">
   <div 
-    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    className="flex items-center space-x-2 mb-3 cursor-pointer"
     onClick={() => setLayersExpanded(!layersExpanded)}
   >
     <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${layersExpanded ? 'rotate-90' : ''}`} />
     <Folder className="w-3 h-3 text-[#8C847A]" />
-    <span className="text-xs text-[#8C847A]">Layers OST</span>
+    <span className="text-[11px] text-[#8C847A]">Layers OST</span>
   </div>
   {layersExpanded && (
-    <ul className="space-y-4">
+    <ul className="space-y-3 ml-4">
       {layers.map(layer => (
         <li 
           key={layer.id}
@@ -527,7 +551,7 @@ useEffect(() => {
           onClick={() => handleProjectSelect(layer)}
         >
           <ChevronRight className="w-3 h-3" />
-          <span className="text-xs flex items-center space-x-2">
+          <span className="text-[11px] flex items-center space-x-2">
             <span className={
               layer.title.split(' ')[0] === 'I' ? 'text-[#8FB8E0]' :
               layer.title.split(' ')[0] === 'II' ? 'text-[#E08F8F]' :
@@ -553,15 +577,15 @@ useEffect(() => {
 {/* Songs Folder */}
 <div className="p-4">
   <div 
-    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    className="flex items-center space-x-2 mb-3 cursor-pointer"
     onClick={() => setSongsExpanded(!songsExpanded)}
   >
     <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${songsExpanded ? 'rotate-90' : ''}`} />
     <Folder className="w-3 h-3 text-[#8C847A]" />
-    <span className="text-xs text-[#8C847A]">Songs</span>
+    <span className="text-[11px] text-[#8C847A]">Songs</span>
   </div>
   {songsExpanded && (
-    <ul className="space-y-4 ml-4">
+    <ul className="space-y-3 ml-4">
       {/* Will */}
       <li 
         className={`flex items-center space-x-2 cursor-pointer transition-colors ${
@@ -572,7 +596,7 @@ useEffect(() => {
         onClick={() => handleProjectSelect(will)}
       >
         <ChevronRight className="w-3 h-3" />
-        <span className="text-xs">{will.title}</span>
+        <span className="text-[11px]">{will.title}</span>
       </li>
       {/* Solstice (8) */}
       <li 
@@ -584,7 +608,19 @@ useEffect(() => {
         onClick={() => handleProjectSelect(solstice)}
       >
         <ChevronRight className="w-3 h-3" />
-        <span className="text-xs">{solstice.title}</span>
+        <span className="text-[11px]">{solstice.title}</span>
+      </li>
+      {/* Laudes */}
+      <li 
+        className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+          activeProject?.id === 'laudes' 
+            ? 'text-[#9E988A]' 
+            : 'text-[#6A665E] hover:text-[#9E988A]'
+        }`}
+        onClick={() => handleProjectSelect(laudes)}
+      >
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-[11px]">{laudes.title}</span>
       </li>
     </ul>
   )}
@@ -593,15 +629,15 @@ useEffect(() => {
 {/* Ambience Folder */}
 <div className="p-4">
   <div 
-    className="flex items-center space-x-2 mb-6 cursor-pointer"
+    className="flex items-center space-x-2 mb-3 cursor-pointer"
     onClick={() => setAmbienceExpanded(!ambienceExpanded)}
   >
     <ChevronRight className={`w-3 h-3 text-[#8C847A] transition-transform ${ambienceExpanded ? 'rotate-90' : ''}`} />
     <Folder className="w-3 h-3 text-[#8C847A]" />
-    <span className="text-xs text-[#8C847A]">Ambience</span>
+    <span className="text-[11px] text-[#8C847A]">Ambience</span>
   </div>
   {ambienceExpanded && (
-    <ul className="space-y-4 ml-4">
+    <ul className="space-y-3 ml-4">
       {/* Defense System */}
       <li 
         className={`flex items-center space-x-2 cursor-pointer transition-colors ${
@@ -612,7 +648,7 @@ useEffect(() => {
         onClick={() => handleProjectSelect(ambience)}
       >
         <ChevronRight className="w-3 h-3" />
-        <span className="text-xs">Defense System</span>
+        <span className="text-[11px]">Defense System</span>
       </li>
       {/* Hangatýr */}
       <li 
@@ -624,13 +660,13 @@ useEffect(() => {
         onClick={() => handleProjectSelect(ambienceHangatyr)}
       >
         <ChevronRight className="w-3 h-3" />
-        <span className="text-xs">Hangatýr</span>
+        <span className="text-[11px]">Hangatýr</span>
       </li>
     </ul>
   )}
 </div>
  {/* Social Media Links */}
-          <div className="p-4 mt-8">
+          <div className="p-6 mt-8">
             <div className="flex items-center justify-center space-x-8">
               <a 
                 href="https://open.spotify.com/artist/69586kzZpLeJAyQCdwZcfz" 
@@ -673,11 +709,11 @@ useEffect(() => {
 
 
 {/* Main Content */}
-<div className="flex-1 h-screen overflow-y-auto">
-  <div className="p-8">
+<div className="flex-1 h-screen overflow-y-auto relative"> {/* Added relative */}
+  <div className="p-8 w-full">
     {activeProject ? (
       activeProject.id === 'phage-index' ? ( // phage-index section
-        <div className="flex flex-col items-center justify-center h-screen space-y-8"> {/* Center content */}
+        <div className="fixed inset-0 flex flex-col items-center justify-center space-y-8 z-0"> {/* Changed z-10 to z-0 */}
           <div className="space-y-12 text-center">
             <h1 className="text-2xl text-[#C2B59B] font-['Cormorant_Garamond'] font-light tracking-[0.5em] leading-relaxed">
               φάγος
@@ -707,7 +743,7 @@ useEffect(() => {
           </div>
         </div>
       ) : ( // Other sections
-        <div className="space-y-8">
+        <div className="space-y-8 relative z-10"> {/* Changed z-20 to z-10 */}
           <div className="flex justify-between items-center">
             <h2 className="text-sm font-normal text-[#9E988A]">
               {activeProject.title}
@@ -760,6 +796,9 @@ useEffect(() => {
 
 
 </div>
+
+{/* Blog Column */}
+<BlogColumn />
     </div>
   );
 }
