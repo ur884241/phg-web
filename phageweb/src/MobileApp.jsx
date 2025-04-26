@@ -1,69 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FileAudio, Folder, ChevronRight, Play, Pause, Volume2, X } from 'lucide-react';
-
-const VideoControls = ({ 
-  isPlaying, 
-  onPlayPause, 
-  duration, 
-  currentTime, 
-  volume,
-  onVolumeChange,
-  onSeek
-}) => {
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="bg-[#030303]/80 p-2 rounded-lg">
-      <div className="flex items-center space-x-2">
-        <button
-          onClick={onPlayPause}
-          className="text-[#8C847A] hover:text-[#9E988A] transition-colors p-1"
-        >
-          {isPlaying ? (
-            <Pause className="w-4 h-4" />
-          ) : (
-            <Play className="w-4 h-4" />
-          )}
-        </button>
-        <span className="text-xs text-[#8C847A] min-w-[40px]">{formatTime(currentTime)}</span>
-        <div 
-          className="flex-1 h-1 bg-[#6A665E] rounded-full cursor-pointer"
-          onClick={onSeek}
-        >
-          <div 
-            className="h-full bg-[#9E988A] rounded-full transition-all"
-            style={{ width: `${(currentTime / duration) * 100}%` }}
-          />
-        </div>
-        <span className="text-xs text-[#8C847A] min-w-[40px]">{formatTime(duration)}</span>
-        <Volume2 className="w-4 h-4 text-[#8C847A]" />
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={volume}
-          onChange={onVolumeChange}
-          className="w-16 h-1 rounded-full appearance-none cursor-pointer bg-[#6A665E]"
-        />
-      </div>
-    </div>
-  );
-};
+import { Play, Pause, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MobileApp = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(100);
   const [isLoading, setIsLoading] = useState(true);
+  const [videosLoaded, setVideosLoaded] = useState({});
   const videoRef = useRef(null);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const lastSwipeTime = useRef(0);
-  const SWIPE_DELAY = 1000; // 1 second delay between swipes
+  const videoElements = useRef({});
 
   const projects = [
     {
@@ -145,29 +90,32 @@ const MobileApp = () => {
     }
   ];
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
+  // Preload all videos
+  useEffect(() => {
+    const loadVideo = (index) => {
+      if (videosLoaded[index]) return;
+
+      const video = document.createElement('video');
+      video.src = projects[index].videoUrl;
+      video.preload = 'auto';
+      video.load();
+      
+      videoElements.current[index] = video;
+      
+      video.onloadeddata = () => {
+        setVideosLoaded(prev => ({ ...prev, [index]: true }));
+      };
+    };
+
+    projects.forEach((_, index) => loadVideo(index));
+  }, []);
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % projects.length);
   };
 
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    const now = Date.now();
-    if (now - lastSwipeTime.current < SWIPE_DELAY) return;
-
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) { // Minimum swipe distance
-      if (diff > 0) {
-        // Swipe left
-        setCurrentIndex((prev) => (prev + 1) % projects.length);
-      } else {
-        // Swipe right
-        setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
-      }
-      lastSwipeTime.current = now;
-    }
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
   };
 
   const handlePlayPause = () => {
@@ -190,26 +138,13 @@ const MobileApp = () => {
   };
 
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && videosLoaded[currentIndex]) {
       videoRef.current.volume = volume / 100;
-      videoRef.current.play().catch(e => console.error('Video play error:', e));
+      if (isPlaying) {
+        videoRef.current.play().catch(e => console.error('Video play error:', e));
+      }
     }
-  }, [currentIndex, volume]);
-
-  useEffect(() => {
-    // Preload next and previous videos
-    const preloadVideo = (index) => {
-      const video = document.createElement('video');
-      video.src = projects[index].videoUrl;
-      video.preload = 'auto';
-    };
-
-    const nextIndex = (currentIndex + 1) % projects.length;
-    const prevIndex = (currentIndex - 1 + projects.length) % projects.length;
-    
-    preloadVideo(nextIndex);
-    preloadVideo(prevIndex);
-  }, [currentIndex]);
+  }, [currentIndex, volume, isPlaying, videosLoaded]);
 
   return (
     <div className="h-screen w-screen bg-[#030303] text-[#8C847A] overflow-hidden">
@@ -221,44 +156,52 @@ const MobileApp = () => {
           loop
           playsInline
           muted={!isPlaying}
-          autoPlay
           src={projects[currentIndex].videoUrl}
           onLoadedData={() => setIsLoading(false)}
         />
       </div>
 
       {/* Content Overlay */}
-      <div 
-        className="relative z-10 h-full w-full flex flex-col justify-between p-6"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Navigation Dots */}
-        <div className="flex justify-center space-x-2 mt-4">
-          {projects.map((_, index) => (
-            <div
-              key={index}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex ? 'bg-[#9E988A]' : 'bg-[#6A665E]'
-              }`}
-            />
-          ))}
+      <div className="relative z-10 h-full w-full flex flex-col justify-between p-6">
+        {/* Navigation Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handlePrevious}
+            className="w-12 h-12 rounded-full bg-[#030303]/50 flex items-center justify-center"
+          >
+            <ChevronLeft className="w-6 h-6 text-[#9E988A]" />
+          </button>
+          <div className="flex space-x-2">
+            {projects.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentIndex ? 'bg-[#9E988A]' : 'bg-[#6A665E]'
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={handleNext}
+            className="w-12 h-12 rounded-full bg-[#030303]/50 flex items-center justify-center"
+          >
+            <ChevronRight className="w-6 h-6 text-[#9E988A]" />
+          </button>
         </div>
 
         {/* Project Info */}
-        <div className="space-y-4">
-          <h1 className="text-2xl text-[#C2B59B] font-light tracking-wider">
+        <div className="space-y-6">
+          <h1 className="text-3xl text-[#C2B59B] font-['Cormorant_Garamond'] font-light tracking-wider">
             {projects[currentIndex].title}
           </h1>
-          <p className="text-sm text-[#8C847A] whitespace-pre-line">
+          <p className="text-base text-[#E0CF8F] font-light leading-relaxed whitespace-pre-line">
             {projects[currentIndex].description}
           </p>
           <div className="flex flex-wrap gap-2">
             {projects[currentIndex].tags.map((tag, index) => (
               <span
                 key={index}
-                className="text-xs px-2 py-1 bg-[#030303]/50 rounded-full text-[#6A665E]"
+                className="text-xs px-3 py-1 bg-[#030303]/50 rounded-full text-[#8FB8E0] border border-[#8FB8E0]/20"
               >
                 {tag}
               </span>
@@ -267,10 +210,22 @@ const MobileApp = () => {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-6">
+          {/* Play/Pause Button */}
+          <button
+            onClick={handlePlayPause}
+            className="w-14 h-14 rounded-full bg-[#030303]/50 flex items-center justify-center mx-auto border border-[#9E988A]/20"
+          >
+            {isPlaying ? (
+              <Pause className="w-7 h-7 text-[#9E988A]" />
+            ) : (
+              <Play className="w-7 h-7 text-[#9E988A]" />
+            )}
+          </button>
+
           {/* Volume Control */}
           <div className="flex items-center space-x-2">
-            <Volume2 className="w-4 h-4 text-[#8C847A]" />
+            <Volume2 className="w-5 h-5 text-[#8C847A]" />
             <input
               type="range"
               min="0"
@@ -280,18 +235,6 @@ const MobileApp = () => {
               className="w-full h-1 bg-[#6A665E] rounded-full appearance-none"
             />
           </div>
-
-          {/* Play/Pause Button */}
-          <button
-            onClick={handlePlayPause}
-            className="w-12 h-12 rounded-full bg-[#030303]/50 flex items-center justify-center mx-auto"
-          >
-            {isPlaying ? (
-              <Pause className="w-6 h-6 text-[#9E988A]" />
-            ) : (
-              <Play className="w-6 h-6 text-[#9E988A]" />
-            )}
-          </button>
         </div>
       </div>
     </div>
