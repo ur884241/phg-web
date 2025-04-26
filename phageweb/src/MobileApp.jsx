@@ -54,28 +54,80 @@ const VideoControls = ({
   );
 };
 
-function MobileApp() {
+const MobileApp = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [volume, setVolume] = useState(100);
+  const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+  const lastSwipeTime = useRef(0);
+  const SWIPE_DELAY = 1000; // 1 second delay between swipes
 
   const projects = [
     {
       id: 'phage',
       title: "P H A G E",
-      description: "A journey through consciousness and machine.",
+      description: "signal-syntax\n\nOriginal Sound Design • 2025",
       videoUrl: "/videos/phage.mp4",
       tags: ["2024", "consciousness", "machine"]
     },
     {
-      id: 'layers',
-      title: "Layers OST",
-      description: "An exploration of the layers between reality and perception.",
+      id: 'layer1',
+      title: "I Genesis",
+      description: "The beginning.",
       videoUrl: "/videos/layer1.mp4",
-      tags: ["music", "consciousness", "layers"]
+      tags: ["origin", "consciousness", "beginning"]
+    },
+    {
+      id: 'layer2',
+      title: "II Division",
+      description: "The split within.",
+      videoUrl: "/videos/layer2.mp4",
+      tags: ["duality", "perception", "reality"]
+    },
+    {
+      id: 'layer3',
+      title: "III Man",
+      description: "The human element in the system.",
+      videoUrl: "/videos/layer3.mp4",
+      tags: ["human", "existence", "consciousness"]
+    },
+    {
+      id: 'layer4',
+      title: "IV Society",
+      description: "The collective manifested.",
+      videoUrl: "/videos/layer4.mp4",
+      tags: ["collective", "society", "structure"]
+    },
+    {
+      id: 'layer5',
+      title: "V Dellusion",
+      description: "The distortion of perceived reality.",
+      videoUrl: "/videos/layer5.mp4",
+      tags: ["illusion", "perception", "distortion"]
+    },
+    {
+      id: 'layer6',
+      title: "VI Altered Machine",
+      description: "The fusion of consciousness and technology.",
+      videoUrl: "/videos/layer6.mp4",
+      tags: ["technology", "fusion", "alteration"]
+    },
+    {
+      id: 'layer7',
+      title: "VII Imaginateur",
+      description: "The creation of new realities.",
+      videoUrl: "/videos/layer7.mp4",
+      tags: ["creation", "imagination", "reality"]
+    },
+    {
+      id: 'layer8',
+      title: "VIII Force",
+      description: "The underlying power that drives all layers.",
+      videoUrl: "/videos/layer8.mp4",
+      tags: ["power", "force", "drive"]
     },
     {
       id: 'will',
@@ -102,6 +154,9 @@ function MobileApp() {
   };
 
   const handleTouchEnd = () => {
+    const now = Date.now();
+    if (now - lastSwipeTime.current < SWIPE_DELAY) return;
+
     const diff = touchStartX.current - touchEndX.current;
     if (Math.abs(diff) > 50) { // Minimum swipe distance
       if (diff > 0) {
@@ -111,6 +166,7 @@ function MobileApp() {
         // Swipe right
         setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
       }
+      lastSwipeTime.current = now;
     }
   };
 
@@ -136,7 +192,23 @@ function MobileApp() {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume / 100;
+      videoRef.current.play().catch(e => console.error('Video play error:', e));
     }
+  }, [currentIndex, volume]);
+
+  useEffect(() => {
+    // Preload next and previous videos
+    const preloadVideo = (index) => {
+      const video = document.createElement('video');
+      video.src = projects[index].videoUrl;
+      video.preload = 'auto';
+    };
+
+    const nextIndex = (currentIndex + 1) % projects.length;
+    const prevIndex = (currentIndex - 1 + projects.length) % projects.length;
+    
+    preloadVideo(nextIndex);
+    preloadVideo(prevIndex);
   }, [currentIndex]);
 
   return (
@@ -149,7 +221,9 @@ function MobileApp() {
           loop
           playsInline
           muted={!isPlaying}
+          autoPlay
           src={projects[currentIndex].videoUrl}
+          onLoadedData={() => setIsLoading(false)}
         />
       </div>
 
@@ -177,7 +251,7 @@ function MobileApp() {
           <h1 className="text-2xl text-[#C2B59B] font-light tracking-wider">
             {projects[currentIndex].title}
           </h1>
-          <p className="text-sm text-[#8C847A]">
+          <p className="text-sm text-[#8C847A] whitespace-pre-line">
             {projects[currentIndex].description}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -222,6 +296,6 @@ function MobileApp() {
       </div>
     </div>
   );
-}
+};
 
 export default MobileApp;

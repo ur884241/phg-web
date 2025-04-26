@@ -64,6 +64,17 @@ const VideoControls = ({
 };
 
 const BlogColumn = () => {
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+    return (
+      <div className="flex space-x-1">
+        <span className="text-[#8FB8E0]">{day}</span>
+        <span className="text-[#E0CF8F]">{month}</span>
+        <span className="text-[#B88FE0]">{year}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="w-48 h-screen overflow-y-auto fixed right-0 top-0 z-20 text-[#8C847A] text-[10px] p-4">
       <div className="space-y-4">
@@ -71,8 +82,8 @@ const BlogColumn = () => {
         <div className="space-y-3">
           {blogEntries.map((entry, index) => (
             <div key={entry.date} className={`opacity-${100 - (index * 10)}`}>
-              <p className="text-[#C2B59B]">{entry.date}</p>
-              <p>{entry.content}</p>
+              {formatDate(entry.date)}
+              <p className="text-[#8C847A] mt-1">{entry.content}</p>
             </div>
           ))}
         </div>
@@ -100,9 +111,9 @@ Original Soundtrack • 2024
 System Ver. 1.0`
   };
 
-const [layersExpanded, setLayersExpanded] = useState(true);
-const [songsExpanded, setSongsExpanded] = useState(false);
-const [ambienceExpanded, setAmbienceExpanded] = useState(false);
+  const [layersExpanded, setLayersExpanded] = useState(true);
+  const [songsExpanded, setSongsExpanded] = useState(true);
+  const [ambienceExpanded, setAmbienceExpanded] = useState(true);
 
   const [activeProject, setActiveProject] = useState(phageIndex);
   const [isPlaying, setIsPlaying] = useState(false);
